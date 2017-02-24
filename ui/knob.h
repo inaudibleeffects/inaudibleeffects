@@ -3,6 +3,7 @@
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
+#include <math.h>
 
 G_BEGIN_DECLS
 
@@ -17,9 +18,9 @@ typedef struct _InaudibleKnobClass   InaudibleKnobClass;
 
 struct _InaudibleKnob
 {
-	int size;
-	float minimumValue;
-	float maximumValue;
+	gint size;
+	gfloat minimumValue;
+	gfloat maximumValue;
     GtkRange parent;
 	GdkPixbuf* image;
 };
@@ -34,7 +35,7 @@ GType		inaudible_knob_get_type(void); G_GNUC_CONST
 
 gfloat		inaudible_knob_get_value(InaudibleKnob* knob);
 void		inaudible_knob_set_value(InaudibleKnob* knob, gfloat value);
-void 		inaudible_knob_set_size (InaudibleKnob* knob, int size);
+void 		inaudible_knob_set_size (InaudibleKnob* knob, gint size);
 
 G_END_DECLS
 

@@ -8,7 +8,7 @@ static gboolean     inaudible_knob_value_changed(gpointer obj);
 
 GType               inaudible_knob_get_type(void);
 GtkWidget*          inaudible_knob_new(void);
-void                inaudible_knob_set_size(InaudibleKnob* knob, int size);
+void                inaudible_knob_set_size(InaudibleKnob* knob, gint size);
 
 gdouble x, y = 0;
 gboolean changing = FALSE;
@@ -61,10 +61,27 @@ static gboolean
 inaudible_knob_motion_notify_event(GtkWidget* widget,
 					               GdkEventMotion* event)
 {
+    gint height;
+    gint width;
+    InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
+    gtk_widget_get_size_request(widget, &width, &height);
+
     if (changing == TRUE)
     {
-        x = event->x;
-        y = event->y;
+        //printf("X : %d\n", (int)(event->x));
+        //printf("Y : %d\n", (int)(event->y));
+        gint Ox = width / 2;
+        gint Oy = height / 2;
+
+        gdouble Mx = event->x - Ox;
+        gdouble My = event->y - Oy;
+
+        gdouble ratio = 23.0 / sqrt(Mx * Mx + My * My);
+
+        printf("Size : %d\n", ((int)Mx - ((int)Ox)));
+
+        x = Ox + Mx * ratio - 7.0;
+        y = Oy + My * ratio - 7.0;
     }
     gtk_widget_queue_draw(widget);
     return TRUE;
