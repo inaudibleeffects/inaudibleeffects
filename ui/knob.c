@@ -1,38 +1,29 @@
 #include "knob.h"
 #include <cairo.h>
 
-static void         inaudible_knob_class_init(InaudibleKnobClass* klass);
-static gboolean     inaudible_knob_expose(GtkWidget *widget, GdkEventExpose *event);
-static void         inaudible_knob_init(InaudibleKnob* knob);
-static gboolean     inaudible_knob_value_changed(gpointer obj);
-
-GType               inaudible_knob_get_type(void);
-GtkWidget*          inaudible_knob_new(void);
-void                inaudible_knob_set_size(InaudibleKnob* knob, gint size);
-
 gdouble x, y = 0;
-gboolean changing = FALSE;
+gdouble angle = 0.0;
+
+struct _InaudibleKnobPrivate
+{
+    gint size;
+    gint cursor_size;
+};
+
+G_DEFINE_TYPE_WITH_PRIVATE(InaudibleKnob, inaudible_knob, GTK_TYPE_RANGE)
+//G_DEFINE_TYPE_WITH_CODE (InaudibleKnob, inaudible_knob, GTK_TYPE_RANGE, G_ADD_PRIVATE (InaudibleKnob))
 
 static gboolean
-inaudible_knob_draw (GtkWidget  *widget,
-                     cairo_t    *cr)
+inaudible_knob_draw(GtkWidget  *widget,
+                    cairo_t    *cr)
 {
-    GdkPixbuf *pix;
-    GError *err = NULL;
-
-    pix = gdk_pixbuf_new_from_file("knob_hole.png", &err);
-    if(err)
-    {
-        printf("Error : %s\n", err->message);
-        g_error_free(err);
-        return FALSE;
-    }
+    InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
 
     /*cairo_set_source_rgba (cr, 1, 0, 0, 0.80);
     cairo_rectangle (cr, 0, 0, 80, 80);
     cairo_fill(cr);*/
 
-    gdk_cairo_set_source_pixbuf(cr, pix, x, y);
+    gdk_cairo_set_source_pixbuf(cr, knob->cursor, x, y);
     cairo_paint(cr);
     cairo_fill (cr);
 
@@ -43,8 +34,9 @@ static gboolean
 inaudible_knob_button_press_event(GtkWidget* widget,
 					              GdkEventButton* event)
 {
-    changing = TRUE;
+    gtk_grab_add(widget);
     gtk_widget_queue_draw(widget);
+
     return TRUE;
 }
 
@@ -52,8 +44,10 @@ static gboolean
 inaudible_knob_button_release_event(GtkWidget* widget,
 					                GdkEventButton* event)
 {
-    changing = FALSE;
+    if (gtk_widget_has_grab(widget))
+        gtk_grab_remove(widget);
     gtk_widget_queue_draw(widget);
+
     return TRUE;
 }
 
@@ -61,17 +55,16 @@ static gboolean
 inaudible_knob_motion_notify_event(GtkWidget* widget,
 					               GdkEventMotion* event)
 {
-    gint height;
-    gint width;
     InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
-    gtk_widget_get_size_request(widget, &width, &height);
+    InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
 
-    if (changing == TRUE)
+    gint iw = gdk_pixbuf_get_width(knob->cursor);
+    gint ih = gdk_pixbuf_get_height(knob->cursor);
+
+    if (gtk_widget_has_grab(widget))
     {
-        //printf("X : %d\n", (int)(event->x));
-        //printf("Y : %d\n", (int)(event->y));
-        gint Ox = width / 2;
-        gint Oy = height / 2;
+        gint Ox = private->size / 2;
+        gint Oy = private->size / 2;
 
         gdouble Mx = event->x - Ox;
         gdouble My = event->y - Oy;
@@ -80,8 +73,8 @@ inaudible_knob_motion_notify_event(GtkWidget* widget,
 
         printf("Size : %d\n", ((int)Mx - ((int)Ox)));
 
-        x = Ox + Mx * ratio - 7.0;
-        y = Oy + My * ratio - 7.0;
+        x = Ox + Mx * ratio - iw / 2;
+        y = Oy + My * ratio - ih / 2;
     }
     gtk_widget_queue_draw(widget);
     return TRUE;
@@ -96,77 +89,26 @@ inaudible_knob_class_init(InaudibleKnobClass* klass)
     widget_class->button_press_event = inaudible_knob_button_press_event;
     widget_class->button_release_event = inaudible_knob_button_release_event;
     widget_class->motion_notify_event = inaudible_knob_motion_notify_event;
+    widget_class->size_allocate = inaudible_knob_size_allocate;
 }
 
 static void
 inaudible_knob_init(InaudibleKnob* knob)
 {
     GtkWidget* widget = GTK_WIDGET(knob);
-    GError* error = NULL;
+    InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
+    private->cursor_size = 0;
 
-    gtk_widget_set_can_focus(widget, TRUE);
-    //knob->image = gdk_pixbuf_new_from_file("knob_hole.png", &error);
+    GError* error = NULL;
+    knob->cursor = gdk_pixbuf_new_from_file("knob_hole.png", &error);
 }
 
 static gboolean
 inaudible_knob_value_changed(gpointer obj)
 {
-    GtkWidget *widget = (GtkWidget *)obj;
-    gtk_widget_queue_draw(widget);
-    return FALSE;
+
+    return TRUE;
 }
-
-static gboolean
-inaudible_knob_expose(GtkWidget *widget,
-                      GdkEventExpose *event)// (GtkWidget *da, GdkEvent *event, gpointer data)
-{
-    /*(void)event;
-    cairo_t *cr;
-    cr = gdk_cairo_create(widget);
-    gdk_cairo_set_source_pixbuf(cr, pix, 0, 0);
-    cairo_paint(cr);
-    cairo_fill (cr);
-    cairo_destroy (cr);*/
-    gtk_widget_queue_draw(widget);
-    return FALSE;
-}
-
-
-GType
-inaudible_knob_get_type(void)
-{
-    static GType type = 0;
-    if (!type)
-    {
-        static const GTypeInfo type_info = {
-            sizeof(InaudibleKnobClass),
-            NULL, /* base_init */
-            NULL, /* base_finalize */
-            (GClassInitFunc)inaudible_knob_class_init,
-            NULL, /* class_finalize */
-            NULL, /* class_data */
-            sizeof(InaudibleKnob),
-            0,    /* n_preallocs */
-            (GInstanceInitFunc)inaudible_knob_init
-        };
-
-        for (int i = 0; ; i++)
-        {
-            const char *name = "InaudibleKnob";
-
-            if (g_type_from_name(name))
-                continue;
-
-            type = g_type_register_static(GTK_TYPE_RANGE,
-                                          name,
-                                          &type_info,
-                                          (GTypeFlags)0);
-            break;
-        }
-    }
-    return type;
-}
-
 
 GtkWidget*
 inaudible_knob_new(void)
@@ -174,27 +116,23 @@ inaudible_knob_new(void)
     GtkWidget* widget = GTK_WIDGET(g_object_new(INAUDIBLE_TYPE_KNOB, NULL));
     if (widget)
     {
-        //inaudible_knob_set_size(widget, 100);
-        //gtk_range_set_adjustment(GTK_RANGE(widget), _adjustment);
+        GtkAdjustment* adjustment = (GtkAdjustment*)gtk_adjustment_new(0, 0, 1, 0.01, 0.5, 0);
+        gtk_range_set_adjustment(GTK_RANGE(widget), adjustment);
+
         g_signal_connect(GTK_WIDGET(widget), "value-changed", G_CALLBACK(inaudible_knob_value_changed), widget);
-
-/*GdkRGBA bg;
-        bg.red = 1.0;
-        bg.alpha = 1.0;
-        gtk_widget_override_background_color(GTK_WIDGET(widget), GTK_STATE_FLAG_NORMAL, &bg);*/
-
-        //inaudible_knob_expose(widget, NULL);
+        printf("RANGE VALUE = %f\n", gtk_range_get_value(GTK_RANGE(widget)));
     }
     return widget;
 }
 
 void
-inaudible_knob_set_size (InaudibleKnob* knob, int size)
+inaudible_knob_size_allocate(GtkWidget* widget,
+                             GdkRectangle* allocation)
 {
-    char name[128];
-    //GtkWidget *widget = GTK_WIDGET(knob);
-    knob->size = size;
-    //sprintf(name, "%s_%d\n", gtk_widget_get_name(widget), size);
-    //gtk_widget_set_name(widget, name);
-    //gtk_widget_queue_resize(widget);
+    printf("Size allocate : %d;%d\n", allocation->width, allocation->height);
+    InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
+    InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
+    private->size = allocation->width < allocation->height ? allocation->width : allocation->height;
+
+    gtk_widget_set_allocation(widget, allocation);
 }
