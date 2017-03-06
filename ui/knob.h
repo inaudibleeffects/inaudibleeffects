@@ -19,8 +19,6 @@ typedef struct _InaudibleKnobClass   InaudibleKnobClass;
 
 struct _InaudibleKnob
 {
-	gfloat minimumValue;
-	gfloat maximumValue;
     GtkRange parent;
 	GdkPixbuf* cursor;
 
@@ -32,21 +30,21 @@ struct _InaudibleKnobClass
 	GtkRangeClass parent_class;
 };
 
-GtkWidget*	        inaudible_knob_new(void);
-GType		        inaudible_knob_get_type(void); G_GNUC_CONST
+//static GType        inaudible_knob_get_type(void); G_GNUC_CONST
+GtkWidget*          inaudible_knob_new(void);
 
-gfloat		        inaudible_knob_get_value(InaudibleKnob* knob);
-void                inaudible_knob_set_value(InaudibleKnob* knob, gfloat value);
-void 		        inaudible_knob_set_size (InaudibleKnob* knob, gint size);
 
 static void         inaudible_knob_class_init(InaudibleKnobClass* klass);
 static void         inaudible_knob_init(InaudibleKnob* knob);
 static gboolean     inaudible_knob_value_changed(gpointer obj);
-void                inaudible_knob_size_allocate(GtkWidget* widget, GdkRectangle* allocation);
 
-GType               inaudible_knob_get_type(void);
-GtkWidget*          inaudible_knob_new(void);
-void                inaudible_knob_set_size(InaudibleKnob* knob, gint size);
+
+//static GType        inaudible_knob_get_type(void);
+static gdouble		inaudible_knob_get_value(InaudibleKnob* knob);
+static void         inaudible_knob_set_range(InaudibleKnob* knob, gdouble min, gdouble max);
+static void         inaudible_knob_set_size(InaudibleKnob* knob, gint size);
+static void         inaudible_knob_set_value(InaudibleKnob* knob, gdouble value);
+static void         inaudible_knob_size_allocate(GtkWidget* widget, GdkRectangle* allocation);
 
 G_END_DECLS
 

@@ -1,29 +1,41 @@
 #include "knob.h"
 #include <cairo.h>
 
-gdouble x, y = 0;
-gdouble angle = 0.0;
-
 struct _InaudibleKnobPrivate
 {
-    gint size;
     gint cursor_size;
+    gint size;
+    gdouble dead_angle;
+    gdouble mouse_grab_y;
+    gdouble old_value;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE(InaudibleKnob, inaudible_knob, GTK_TYPE_RANGE)
-//G_DEFINE_TYPE_WITH_CODE (InaudibleKnob, inaudible_knob, GTK_TYPE_RANGE, G_ADD_PRIVATE (InaudibleKnob))
 
 static gboolean
 inaudible_knob_draw(GtkWidget  *widget,
                     cairo_t    *cr)
 {
     InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
+    InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
+    gdouble value = inaudible_knob_get_value(knob);
+    gdouble max = gtk_adjustment_get_upper(gtk_range_get_adjustment(GTK_RANGE(knob)));
 
     /*cairo_set_source_rgba (cr, 1, 0, 0, 0.80);
     cairo_rectangle (cr, 0, 0, 80, 80);
     cairo_fill(cr);*/
 
-    gdk_cairo_set_source_pixbuf(cr, knob->cursor, x, y);
+    gdouble rad = ((280 * (value / max)) - 320) / (180 / M_PI);
+
+    gdouble x = -23.0 * sin(rad) + 40 - 7;
+    gdouble y = 23.0 * cos(rad) + 40 - 7;
+
+    gdk_cairo_set_source_pixbuf(
+        cr,
+        knob->cursor,
+        x,
+        y
+    );
     cairo_paint(cr);
     cairo_fill (cr);
 
@@ -34,10 +46,13 @@ static gboolean
 inaudible_knob_button_press_event(GtkWidget* widget,
 					              GdkEventButton* event)
 {
+    InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
+    InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
+    private->mouse_grab_y = event->y;
+    private->old_value = inaudible_knob_get_value(knob);
+
     gtk_grab_add(widget);
     gtk_widget_queue_draw(widget);
-
-    return TRUE;
 }
 
 static gboolean
@@ -58,25 +73,16 @@ inaudible_knob_motion_notify_event(GtkWidget* widget,
     InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
     InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
 
-    gint iw = gdk_pixbuf_get_width(knob->cursor);
-    gint ih = gdk_pixbuf_get_height(knob->cursor);
-
     if (gtk_widget_has_grab(widget))
     {
-        gint Ox = private->size / 2;
-        gint Oy = private->size / 2;
+        gdouble max = gtk_adjustment_get_upper(gtk_range_get_adjustment(GTK_RANGE(knob)));
+        gdouble value = private->old_value - ((event->y - private->mouse_grab_y) / 200);
 
-        gdouble Mx = event->x - Ox;
-        gdouble My = event->y - Oy;
+        printf("Value is now : %f\n", value);
 
-        gdouble ratio = 23.0 / sqrt(Mx * Mx + My * My);
-
-        printf("Size : %d\n", ((int)Mx - ((int)Ox)));
-
-        x = Ox + Mx * ratio - iw / 2;
-        y = Oy + My * ratio - ih / 2;
+        inaudible_knob_set_value(knob, value);
     }
-    gtk_widget_queue_draw(widget);
+
     return TRUE;
 }
 
@@ -95,18 +101,19 @@ inaudible_knob_class_init(InaudibleKnobClass* klass)
 static void
 inaudible_knob_init(InaudibleKnob* knob)
 {
-    GtkWidget* widget = GTK_WIDGET(knob);
     InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
     private->cursor_size = 0;
+    private->dead_angle = 50;
 
     GError* error = NULL;
     knob->cursor = gdk_pixbuf_new_from_file("knob_hole.png", &error);
+
+    gtk_widget_queue_draw(GTK_WIDGET(knob));
 }
 
 static gboolean
 inaudible_knob_value_changed(gpointer obj)
 {
-
     return TRUE;
 }
 
@@ -121,8 +128,29 @@ inaudible_knob_new(void)
 
         g_signal_connect(GTK_WIDGET(widget), "value-changed", G_CALLBACK(inaudible_knob_value_changed), widget);
         printf("RANGE VALUE = %f\n", gtk_range_get_value(GTK_RANGE(widget)));
+
+
     }
     return widget;
+}
+
+static gdouble
+inaudible_knob_get_value(InaudibleKnob* knob)
+{
+    return gtk_range_get_value(GTK_RANGE(knob));
+}
+
+static void
+inaudible_knob_set_range(InaudibleKnob* knob, gdouble min, gdouble max)
+{
+    gtk_range_set_range(GTK_RANGE(knob), min, max);
+}
+
+static void
+inaudible_knob_set_value(InaudibleKnob* knob, gdouble value)
+{
+    gtk_range_set_value(GTK_RANGE(knob), value);
+    gtk_widget_queue_draw(GTK_WIDGET(knob));
 }
 
 void
