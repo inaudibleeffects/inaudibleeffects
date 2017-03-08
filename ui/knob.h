@@ -20,27 +20,27 @@ typedef struct _InaudibleKnobClass   InaudibleKnobClass;
 struct _InaudibleKnob
 {
     GtkRange parent;
-	GdkPixbuf* cursor;
+
+    gchar* cursor;
+    gchar* knob_hover;
 
     InaudibleKnobPrivate* priv;
 };
 
 struct _InaudibleKnobClass
 {
-	GtkRangeClass parent_class;
+    GtkRangeClass parent_class;
 };
 
 //static GType        inaudible_knob_get_type(void); G_GNUC_CONST
 GtkWidget*          inaudible_knob_new(void);
 
-
 static void         inaudible_knob_class_init(InaudibleKnobClass* klass);
 static void         inaudible_knob_init(InaudibleKnob* knob);
 static gboolean     inaudible_knob_value_changed(gpointer obj);
 
-
 //static GType        inaudible_knob_get_type(void);
-static gdouble		inaudible_knob_get_value(InaudibleKnob* knob);
+static gdouble      inaudible_knob_get_value(InaudibleKnob* knob);
 static void         inaudible_knob_set_range(InaudibleKnob* knob, gdouble min, gdouble max);
 static void         inaudible_knob_set_size(InaudibleKnob* knob, gint size);
 static void         inaudible_knob_set_value(InaudibleKnob* knob, gdouble value);

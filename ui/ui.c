@@ -5,7 +5,8 @@ int main( int argc, char *argv[])
     GtkWidget *window;
     GtkWidget *layout;
     GtkWidget *image;
-	GtkWidget* knob;
+	GtkWidget* knobDelay;
+    GtkWidget* knobFeedback;
 
     gtk_init(&argc, &argv);
 
@@ -20,9 +21,13 @@ int main( int argc, char *argv[])
     image = gtk_image_new_from_file("background.png");
     gtk_layout_put(GTK_LAYOUT(layout), image, 0, 0);
 
-	knob = inaudible_knob_new();
-	gtk_layout_put(GTK_LAYOUT(layout), knob, 174, 35);
-    gtk_widget_set_size_request(knob, 80, 80);
+    knobDelay = inaudible_knob_new();
+	gtk_layout_put(GTK_LAYOUT(layout), knobDelay, 55, 35);
+    gtk_widget_set_size_request(knobDelay, 80, 80);
+
+	knobFeedback = inaudible_knob_new();
+	gtk_layout_put(GTK_LAYOUT(layout), knobFeedback, 174, 35);
+    gtk_widget_set_size_request(knobFeedback, 80, 80);
 
 
     g_signal_connect_swapped(G_OBJECT(window), "destroy",

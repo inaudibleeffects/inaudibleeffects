@@ -3,6 +3,11 @@
 
 struct _InaudibleKnobPrivate
 {
+    GdkPixbuf* cursor;
+    GdkPixbuf* knob_hover;
+
+    gboolean hovering;
+    gint alpha;
     gint cursor_size;
     gint size;
     gdouble dead_angle;
@@ -21,18 +26,60 @@ inaudible_knob_draw(GtkWidget  *widget,
     gdouble value = inaudible_knob_get_value(knob);
     gdouble max = gtk_adjustment_get_upper(gtk_range_get_adjustment(GTK_RANGE(knob)));
 
+    /*gchar* text;
+    g_ascii_formatd(text, 5, "%.2f", value);
+    text = g_strconcat(text, " ms", NULL);
+
+    cairo_select_font_face(cr, "Steelfish",
+        CAIRO_FONT_SLANT_NORMAL,
+        CAIRO_FONT_WEIGHT_BOLD);
+
+    cairo_set_font_size(cr, 12);
+
+    cairo_set_source_rgb(cr, 0, 0, 0);
+    cairo_move_to(cr, 30, 44);
+    cairo_show_text(cr, text);
+
+    cairo_set_source_rgb(cr, 1, 1, 1);
+    cairo_move_to(cr, 30, 45);
+    cairo_show_text(cr, text);
+
+    g_free(text);*/
+
     /*cairo_set_source_rgba (cr, 1, 0, 0, 0.80);
     cairo_rectangle (cr, 0, 0, 80, 80);
     cairo_fill(cr);*/
 
-    gdouble rad = ((280 * (value / max)) - 320) / (180 / M_PI);
+    gdouble rad = ((285 * (value / max)) - 325) / (180 / M_PI);
 
-    gdouble x = -23.0 * sin(rad) + 40 - 7;
-    gdouble y = 23.0 * cos(rad) + 40 - 7;
+    gdouble x = -23.0 * sin(rad) + 40 - (gdk_pixbuf_get_width(private->cursor) / 2);
+    gdouble y = 23.0 * cos(rad) + 40 - (gdk_pixbuf_get_height(private->cursor) / 2);
+
+    GdkPixbuf* test = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 80, 80);
+    gdk_pixbuf_composite (private->knob_hover,
+                           test,
+                           0,
+                           0,
+                           80,
+                           80,
+                           0,
+                           0,
+                           1,
+                           1,
+                           GDK_INTERP_BILINEAR,
+                           private->alpha);
 
     gdk_cairo_set_source_pixbuf(
         cr,
-        knob->cursor,
+        test,
+        0,
+        0
+    );
+    cairo_paint(cr);
+
+    gdk_cairo_set_source_pixbuf(
+        cr,
+        private->cursor,
         x,
         y
     );
@@ -66,8 +113,27 @@ inaudible_knob_button_release_event(GtkWidget* widget,
     return TRUE;
 }
 
+gboolean
+inaudible_knob_enter_notify_event(GtkWidget* widget,
+                                  GdkEventCrossing* event)
+{
+    InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
+    InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
+    private->hovering = TRUE;
+}
+
+gboolean
+inaudible_knob_leave_notify_event(GtkWidget*        widget,
+                                  GdkEventCrossing* event)
+{
+    InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
+    InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
+    if (gtk_widget_has_grab(widget) == FALSE)
+        private->hovering = FALSE;
+}
+
 static gboolean
-inaudible_knob_motion_notify_event(GtkWidget* widget,
+inaudible_knob_motion_notify_event(GtkWidget*      widget,
 					               GdkEventMotion* event)
 {
     InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
@@ -77,8 +143,6 @@ inaudible_knob_motion_notify_event(GtkWidget* widget,
     {
         gdouble max = gtk_adjustment_get_upper(gtk_range_get_adjustment(GTK_RANGE(knob)));
         gdouble value = private->old_value - ((event->y - private->mouse_grab_y) / 200);
-
-        printf("Value is now : %f\n", value);
 
         inaudible_knob_set_value(knob, value);
     }
@@ -94,6 +158,8 @@ inaudible_knob_class_init(InaudibleKnobClass* klass)
     widget_class->draw = inaudible_knob_draw;
     widget_class->button_press_event = inaudible_knob_button_press_event;
     widget_class->button_release_event = inaudible_knob_button_release_event;
+    widget_class->enter_notify_event = inaudible_knob_enter_notify_event;
+    widget_class->leave_notify_event = inaudible_knob_leave_notify_event;
     widget_class->motion_notify_event = inaudible_knob_motion_notify_event;
     widget_class->size_allocate = inaudible_knob_size_allocate;
 }
@@ -102,11 +168,13 @@ static void
 inaudible_knob_init(InaudibleKnob* knob)
 {
     InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
-    private->cursor_size = 0;
+    private->alpha = 0;
     private->dead_angle = 50;
+    private->hovering = FALSE;
 
     GError* error = NULL;
-    knob->cursor = gdk_pixbuf_new_from_file("knob_hole.png", &error);
+    private->cursor = gdk_pixbuf_new_from_file("cursor.png", &error);
+    private->knob_hover = gdk_pixbuf_new_from_file("knob_hover.png", &error);
 
     gtk_widget_queue_draw(GTK_WIDGET(knob));
 }
@@ -114,6 +182,32 @@ inaudible_knob_init(InaudibleKnob* knob)
 static gboolean
 inaudible_knob_value_changed(gpointer obj)
 {
+    return TRUE;
+}
+
+static gboolean
+on_tick(GtkWidget     *widget,
+        GdkFrameClock *frame_clock,
+        gpointer       data)
+{
+    InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
+    InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
+
+    if (private->alpha == 0 && private->hovering == FALSE)
+        return TRUE;
+
+    if (private->hovering == TRUE)
+    {
+        if (private->alpha < 245)
+            private->alpha += 10;
+    }
+    else
+    {
+        if (private->alpha > 10)
+            private->alpha -= 10;
+    }
+    gtk_widget_queue_draw(widget);
+
     return TRUE;
 }
 
@@ -127,9 +221,9 @@ inaudible_knob_new(void)
         gtk_range_set_adjustment(GTK_RANGE(widget), adjustment);
 
         g_signal_connect(GTK_WIDGET(widget), "value-changed", G_CALLBACK(inaudible_knob_value_changed), widget);
-        printf("RANGE VALUE = %f\n", gtk_range_get_value(GTK_RANGE(widget)));
+        //printf("RANGE VALUE = %f\n", gtk_range_get_value(GTK_RANGE(widget)));
 
-
+        gtk_widget_add_tick_callback (widget, on_tick, NULL, NULL);
     }
     return widget;
 }
@@ -157,7 +251,7 @@ void
 inaudible_knob_size_allocate(GtkWidget* widget,
                              GdkRectangle* allocation)
 {
-    printf("Size allocate : %d;%d\n", allocation->width, allocation->height);
+    //printf("Size allocate : %d;%d\n", allocation->width, allocation->height);
     InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
     InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
     private->size = allocation->width < allocation->height ? allocation->width : allocation->height;
