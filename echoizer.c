@@ -106,7 +106,7 @@ run(LV2_Handle instance, uint32_t samples)
     const float         time        = *(echoizer->time);
     const float         feedback    = *(echoizer->feedback);
     const float* const  input       = echoizer->input;
-    float* const        output      = echoizer->output;
+    const float*        output      = echoizer->output;
 
     const int           limit       = (int)(time / TIME_MAX * buffer_size);
 
