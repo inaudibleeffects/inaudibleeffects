@@ -91,7 +91,7 @@ inaudible_knob_draw(GtkWidget  *widget,
 
 static gboolean
 inaudible_knob_button_press_event(GtkWidget* widget,
-					              GdkEventButton* event)
+                                  GdkEventButton* event)
 {
     InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
     InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
@@ -104,7 +104,7 @@ inaudible_knob_button_press_event(GtkWidget* widget,
 
 static gboolean
 inaudible_knob_button_release_event(GtkWidget* widget,
-					                GdkEventButton* event)
+                                    GdkEventButton* event)
 {
     if (gtk_widget_has_grab(widget))
         gtk_grab_remove(widget);
@@ -134,7 +134,7 @@ inaudible_knob_leave_notify_event(GtkWidget*        widget,
 
 static gboolean
 inaudible_knob_motion_notify_event(GtkWidget*      widget,
-					               GdkEventMotion* event)
+                                   GdkEventMotion* event)
 {
     InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
     InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
