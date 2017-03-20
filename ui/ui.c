@@ -2,11 +2,12 @@
 
 int main( int argc, char *argv[])
 {
-    GtkWidget *window;
-    GtkWidget *layout;
-    GtkWidget *image;
-	GtkWidget* knobDelay;
-    GtkWidget* knobFeedback;
+    GtkWidget* window;
+    GtkWidget* layout;
+    GtkWidget* image;
+	InaudibleKnob* knobDelay;
+    InaudibleKnob* knobFeedback;
+    InaudibleKnob* knobBlend;
 
     gtk_init(&argc, &argv);
 
@@ -15,19 +16,26 @@ int main( int argc, char *argv[])
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 
     layout = gtk_layout_new(NULL, NULL);
-    gtk_container_add(GTK_CONTAINER (window), layout);
+    gtk_container_add(GTK_CONTAINER(window), layout);
     gtk_widget_show(layout);
 
     image = gtk_image_new_from_file("background.png");
     gtk_layout_put(GTK_LAYOUT(layout), image, 0, 0);
 
-    knobDelay = inaudible_knob_new();
-	gtk_layout_put(GTK_LAYOUT(layout), knobDelay, 55, 35);
-    gtk_widget_set_size_request(knobDelay, 80, 80);
+    knobDelay = (InaudibleKnob*)inaudible_knob_new();
+	gtk_layout_put(GTK_LAYOUT(layout), (GtkWidget*)knobDelay, 55, 35);
+    gtk_widget_set_size_request((GtkWidget*)knobDelay, 80, 80);
+    inaudible_knob_set_hue(knobDelay, 20);
 
-	knobFeedback = inaudible_knob_new();
-	gtk_layout_put(GTK_LAYOUT(layout), knobFeedback, 174, 35);
-    gtk_widget_set_size_request(knobFeedback, 80, 80);
+	knobFeedback = (InaudibleKnob*)inaudible_knob_new();
+	gtk_layout_put(GTK_LAYOUT(layout), (GtkWidget*)knobFeedback, 174, 35);
+    gtk_widget_set_size_request((GtkWidget*)knobFeedback, 80, 80);
+    inaudible_knob_set_hue(knobFeedback, 60);
+
+    knobBlend = (InaudibleKnob*)inaudible_knob_new();
+	gtk_layout_put(GTK_LAYOUT(layout), (GtkWidget*)knobBlend, 293, 35);
+    gtk_widget_set_size_request((GtkWidget*)knobBlend, 80, 80);
+    inaudible_knob_set_hue(knobBlend, 100);
 
 
     g_signal_connect_swapped(G_OBJECT(window), "destroy",

@@ -258,7 +258,6 @@ inaudible_knob_new(void)
     return widget;
 }
 
-
 static gdouble
 inaudible_knob_get_value(InaudibleKnob* knob)
 {

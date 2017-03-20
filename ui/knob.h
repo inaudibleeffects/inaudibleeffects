@@ -38,7 +38,7 @@ static void     inaudible_knob_class_init(InaudibleKnobClass* klass);
 static void     inaudible_knob_init(InaudibleKnob* knob);
 static gboolean inaudible_knob_value_changed(gpointer obj);
 
-//GType  inaudible_knob_get_type(void);
+//GType         inaudible_knob_get_type(void);
 static gdouble  inaudible_knob_get_value(InaudibleKnob* knob);
 void            inaudible_knob_set_hue(InaudibleKnob* knob, guchar value);
 static void     inaudible_knob_set_range(InaudibleKnob* knob, gdouble min, gdouble max);
