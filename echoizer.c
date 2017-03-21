@@ -31,14 +31,16 @@
 typedef enum {
     ECHOIZER_TIME       = 0,
     ECHOIZER_FEEDBACK   = 1,
-    ECHOIZER_INPUT      = 2,
-    ECHOIZER_OUTPUT     = 3
+    ECHOIZER_BLEND      = 2,
+    ECHOIZER_INPUT      = 3,
+    ECHOIZER_OUTPUT     = 4
 } PortIndex;
 
 typedef struct {
     // Port buffers
     const float*    time;
     const float*    feedback;
+    const float*    blend;
     const float*    input;
     float*          output;
 } Echoizer;
@@ -84,6 +86,9 @@ connect_port(LV2_Handle instance,
         case ECHOIZER_FEEDBACK:
             echoizer->feedback = (const float*)data;
             break;
+        case ECHOIZER_BLEND:
+            echoizer->blend = (const float*)data;
+            break;
         case ECHOIZER_INPUT:
             echoizer->input = (float*)data;
             break;
@@ -105,8 +110,9 @@ run(LV2_Handle instance, uint32_t samples)
 
     const float         time        = *(echoizer->time);
     const float         feedback    = *(echoizer->feedback);
+    const float         blend       = *(echoizer->blend);
     const float* const  input       = echoizer->input;
-    const float*        output      = echoizer->output;
+    float*              output      = echoizer->output;
 
     const int           limit       = (int)(time / TIME_MAX * buffer_size);
 
@@ -114,8 +120,10 @@ run(LV2_Handle instance, uint32_t samples)
     {
         // Compute output from buffer and feedback.
         // Weird stuff happens if you increase the time value.
-        output[pos] = input[pos] + buffer[sample] * feedback;
-        buffer[sample] = output[pos];
+        const float input_blend = fminf(1.f - blend, 0.5f) / 0.5f * input[pos];
+        const float delay_blend = fminf(blend, 0.5f) / 0.5f * buffer[sample] * feedback;
+        output[pos] = input_blend + delay_blend;
+        buffer[sample] = input[pos] + buffer[sample] * feedback;
 
         sample++;
         if (sample >= limit) // Limit reached ?
