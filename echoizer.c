@@ -29,11 +29,11 @@
 
 
 typedef enum {
-    ECHOIZER_TIME       = 0,
-    ECHOIZER_FEEDBACK   = 1,
-    ECHOIZER_BLEND      = 2,
-    ECHOIZER_INPUT      = 3,
-    ECHOIZER_OUTPUT     = 4
+    ECHOIZER_INPUT      = 0,
+    ECHOIZER_OUTPUT     = 1,
+    ECHOIZER_TIME       = 2,
+    ECHOIZER_FEEDBACK   = 3,
+    ECHOIZER_BLEND      = 4
 } PortIndex;
 
 typedef struct {
@@ -80,6 +80,12 @@ connect_port(LV2_Handle instance,
 
     switch ((PortIndex)port)
     {
+        case ECHOIZER_INPUT:
+            echoizer->input = (float*)data;
+            break;
+        case ECHOIZER_OUTPUT:
+            echoizer->output = (float*)data;
+            break;
         case ECHOIZER_TIME:
             echoizer->time = (const float*)data;
             break;
@@ -88,12 +94,6 @@ connect_port(LV2_Handle instance,
             break;
         case ECHOIZER_BLEND:
             echoizer->blend = (const float*)data;
-            break;
-        case ECHOIZER_INPUT:
-            echoizer->input = (float*)data;
-            break;
-        case ECHOIZER_OUTPUT:
-            echoizer->output = (float*)data;
             break;
     }
 }
@@ -108,11 +108,11 @@ run(LV2_Handle instance, uint32_t samples)
 {
     const Echoizer* echoizer = (const Echoizer*)instance;
 
+    const float*        input       = echoizer->input;
+    float*              output      = echoizer->output;
     const float         time        = *(echoizer->time);
     const float         feedback    = *(echoizer->feedback);
     const float         blend       = *(echoizer->blend);
-    const float* const  input       = echoizer->input;
-    float*              output      = echoizer->output;
 
     const int           limit       = (int)(time / TIME_MAX * buffer_size);
 
