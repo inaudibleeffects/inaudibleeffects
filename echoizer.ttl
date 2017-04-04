@@ -1,16 +1,36 @@
+@prefix atom:  <http://lv2plug.in/ns/ext/atom#> .
 @prefix doap:  <http://usefulinc.com/ns/doap#> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix urid: <http://lv2plug.in/ns/ext/urid#> .
+
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
+@prefix work:  <http://lv2plug.in/ns/ext/worker#> .
+@prefix param: <http://lv2plug.in/ns/ext/parameters#> .
+
+
+<http://inaudibleeffects.github.io/echoizer#ui>
+   a ui:Gtk3UI ;
+   ui:binary <echoizer_ui.so> ;
+   ui:requiredFeature ui:makeResident ;
+   lv2:requiredFeature urid:map ;
+   lv2:extensionData ui:showInterface .
 
 <http://inaudibleeffects.github.io/echoizer>
 	a lv2:Plugin ,
 		lv2:DelayPlugin ;
 	lv2:project <http://inaudibleeffects.github.io/echoizer> ;
+    lv2:requiredFeature state:loadDefaultState ,
+        urid:map ;
+    lv2:optionalFeature lv2:hardRTCapable ;
+    lv2:extensionData state:interface , work:interface ;
 	doap:name "Echoizer" ;
 	doap:license <http://opensource.org/licenses/isc> ;
-	lv2:optionalFeature lv2:hardRTCapable ;
+    ui:ui <http://inaudibleeffects.github.io/echoizer#ui>;
 
 	lv2:port [
 		a lv2:AudioPort ,
@@ -24,7 +44,7 @@
 		lv2:index 1 ;
 		lv2:symbol "out" ;
 		lv2:name "Out"
-	] . [
+	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
 		lv2:index 2 ;
@@ -46,7 +66,7 @@
 		] , [
 			rdfs:label "2000ms" ;
 			rdf:value 2000.0
-		]
+		] ;
 	] , [
 		a lv2:InputPort ,
 			lv2:ControlPort ;
@@ -85,4 +105,4 @@
 			rdfs:label "0.75" ;
 			rdf:value 0.75
 		] ;
-	] ,
+	] .

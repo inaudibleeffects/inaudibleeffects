@@ -258,7 +258,7 @@ inaudible_knob_new(void)
     return widget;
 }
 
-static gdouble
+gdouble
 inaudible_knob_get_value(InaudibleKnob* knob)
 {
     return gtk_range_get_value(GTK_RANGE(knob));
