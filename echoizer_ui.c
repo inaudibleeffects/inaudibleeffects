@@ -218,51 +218,34 @@ instantiate(const LV2UI_Descriptor*   descriptor,
     //gtk_container_add(GTK_CONTAINER(ui->window), ui->layout);
     //gtk_widget_show(ui->layout);
 
-
-    char* background_png;
-    background_png = _binary_ui_background_png_start;
-
-    GdkPixbufLoader *loader;
-    loader = gdk_pixbuf_loader_new();
-
     GError* error = NULL;
-    ///http://stackoverflow.com/questions/14121166/gdk-pixbuf-load-image-from-memory
-    guint size = (unsigned int)(_binary_ui_background_png_end - _binary_ui_background_png_start);
-    printf("Loading background (%d)\n", size);
-    gdk_pixbuf_loader_write(loader, background_png, size, &error);
-    ui->image = gtk_image_new_from_pixbuf(gdk_pixbuf_loader_get_pixbuf(loader));
-    //printf("Null ? %d -> %s\n", ui->image == NULL ? 1 : 0, error->message);
 
-    //printf("Loading background (%d)\n", _binary_ui_background_png_size);
-    /*GdkPixbuf* background = gdk_pixbuf_new_from_data (background_png,
-                              GDK_COLORSPACE_RGB,
-                              FALSE,
-                              8,
-                              600,
-                              150,
-                              1800,
-                              NULL,
-                              NULL);
-    ui->image = gtk_image_new_from_pixbuf(background); //gtk_image_new_from_file("background.png");*/
+    ui->image = gtk_image_new_from_pixbuf(
+        inaudible_pixbuf_load_from_data(
+            _binary_ui_background_png_start,
+            _binary_ui_background_png_end
+        )
+    );
+
     gtk_layout_put(GTK_LAYOUT(ui->layout), ui->image, 0, 0);
 
     ui->knobDelay = (InaudibleKnob*)inaudible_knob_new();
     gtk_layout_put(GTK_LAYOUT(ui->layout), (GtkWidget*)ui->knobDelay, 55, 35);
     gtk_widget_set_size_request((GtkWidget*)ui->knobDelay, 80, 80);
-    inaudible_knob_set_hue(ui->knobDelay, 20);
+    //inaudible_knob_set_hue(ui->knobDelay, 20);
     g_signal_connect(ui->knobDelay, "value-changed", (GCallback)knob_value_changed, NULL);
 
     ui->knobFeedback = (InaudibleKnob*)inaudible_knob_new();
     gtk_layout_put(GTK_LAYOUT(ui->layout), (GtkWidget*)ui->knobFeedback, 174, 35);
     gtk_widget_set_size_request((GtkWidget*)ui->knobFeedback, 80, 80);
-    inaudible_knob_set_hue(ui->knobFeedback, 20);
+    //inaudible_knob_set_hue(ui->knobFeedback, 60);
     g_signal_connect(ui->knobFeedback, "value-changed", (GCallback)knob_value_changed, NULL);
 
 
     ui->knobBlend = (InaudibleKnob*)inaudible_knob_new();
     gtk_layout_put(GTK_LAYOUT(ui->layout), (GtkWidget*)ui->knobBlend, 293, 35);
     gtk_widget_set_size_request((GtkWidget*)ui->knobBlend, 80, 80);
-    inaudible_knob_set_hue(ui->knobBlend, 20);
+    //inaudible_knob_set_hue(ui->knobBlend, 100);
     g_signal_connect(ui->knobBlend, "value-changed", (GCallback)knob_value_changed, NULL);
 
     // Request state (filename) from plugin

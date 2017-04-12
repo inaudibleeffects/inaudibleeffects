@@ -1,5 +1,20 @@
 #include <gdk/gdk.h>
 
+static GdkPixbuf*
+inaudible_pixbuf_load_from_data(const char* start,
+                                const char* end)
+{
+    GdkPixbuf* pixbuf;
+    GdkPixbufLoader* loader = gdk_pixbuf_loader_new_with_type("png", NULL);
+    gsize size = (gsize)(end - start);
+    
+    gdk_pixbuf_loader_write(loader, start, size, NULL);
+    pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+    gdk_pixbuf_loader_close(loader, NULL);
+
+    return pixbuf;
+}
+
 /*
     Change contrast.
 */

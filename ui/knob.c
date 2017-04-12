@@ -1,11 +1,9 @@
 #include "knob.h"
 
-extern char _binary_ui_cursor_png_start[];
-extern char _binary_ui_knob_png_end[];
-extern char _binary_ui_knob_png_size[];
-extern char _binary_ui_cursor_png_size[];
-extern char _binary_ui_cursor_png_end[];
-extern char _binary_ui_knob_png_start[];
+extern const char _binary_ui_cursor_png_start[];
+extern const char _binary_ui_cursor_png_end[];
+extern const char _binary_ui_knob_png_start[];
+extern const char _binary_ui_knob_png_end[];
 
 struct _InaudibleKnobPrivate
 {
@@ -17,7 +15,7 @@ struct _InaudibleKnobPrivate
     gint alpha;                 // Overlay pixbuf alpha
     guint tick_callback;        // Animation callback ID
     gint64 overlay_last_frame;  // Last frame timestamp of animation
-    guchar hue;
+    guchar hue;                 // Last hue value
     gdouble dead_angle;         // Dead angle
     gdouble last_value;         // Last value set
     gdouble mouse_grab_y;       // Mouse position in Y axis
@@ -42,17 +40,17 @@ inaudible_knob_draw(GtkWidget *widget,
     int width = gtk_widget_get_allocated_width(widget);
     int height = gtk_widget_get_allocated_width(widget);
 
-    gdouble ox = width / 2.0;
-    gdouble oy = height / 2.0;
+    double ox = width / 2.0;
+    double oy = height / 2.0;
 
     int knob_width = gdk_pixbuf_get_width(private->knob);
-    int knob_height = gdk_pixbuf_get_width(private->knob);
+    int knob_height = gdk_pixbuf_get_height(private->knob);
     int knob_x = ox - knob_width / 2;
     int knob_y = oy - knob_height / 2;
 
-    gdouble rad = ((285 * (value / max)) - 325) / (180 / M_PI);
-    gdouble cursor_x = -23.0 * sin(rad) + ox - (gdk_pixbuf_get_width(private->cursor) / 2);
-    gdouble cursor_y = 23.0 * cos(rad) + oy - (gdk_pixbuf_get_height(private->cursor) / 2);
+    double rad = ((285 * (value / max)) - 325) / (180 / M_PI);
+    double cursor_x = -23.0 * sin(rad) + ox - (gdk_pixbuf_get_width(private->cursor) / 2);
+    double cursor_y = 23.0 * cos(rad) + oy - (gdk_pixbuf_get_height(private->cursor) / 2);
 
     GdkPixbuf* overlay = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, knob_width, knob_height);
     gdk_pixbuf_composite(private->overlay,
@@ -192,64 +190,35 @@ static void
 inaudible_knob_init(InaudibleKnob* knob)
 {
     InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
+
+    // Initialization.
+
     private->alpha = 250; // Fade out effet at startup (and avoid glitches)
     private->dead_angle = 50;
     private->hovering = FALSE;
     private->hue = 0;
     private->overlay_last_frame = 0;
-    private->tick_callback = gtk_widget_add_tick_callback(GTK_WIDGET(knob), inaudible_knob_on_tick, NULL, NULL);
+    private->tick_callback = gtk_widget_add_tick_callback(
+        GTK_WIDGET(knob),
+        inaudible_knob_on_tick,
+        NULL,
+        NULL
+    );
 
+    // Load pixbufs.
 
-    char* cursor_png = _binary_ui_cursor_png_start;
-    char* knob_png = _binary_ui_knob_png_start;
+    private->cursor = inaudible_pixbuf_load_from_data(
+        _binary_ui_cursor_png_start,
+        _binary_ui_cursor_png_end
+    );
 
-    GdkPixbufLoader *loaderKnob;
-    GdkPixbufLoader *loaderCursor;
+    private->knob = inaudible_pixbuf_load_from_data(
+        _binary_ui_knob_png_start,
+        _binary_ui_knob_png_end
+    );
 
-    loaderCursor = gdk_pixbuf_loader_new();
-    loaderKnob = gdk_pixbuf_loader_new();
-
-
-    GError* error = NULL;
-///http://stackoverflow.com/questions/14121166/gdk-pixbuf-load-image-from-memory
-    guint sizeCursor = (unsigned int)(_binary_ui_cursor_png_end - _binary_ui_cursor_png_start);
-    printf("Loading cursor (%d)\n", sizeCursor);
-    gdk_pixbuf_loader_write(loaderCursor, cursor_png, sizeCursor, &error);
-    private->cursor = gdk_pixbuf_loader_get_pixbuf(loaderCursor);
-
-    for(int i = 0; i < 10; i++)
-        printf("%d: %02X\n", i, (unsigned char)*(_binary_ui_cursor_png_start+i));
-
-    guint sizeKnob = (unsigned int)(_binary_ui_knob_png_end - _binary_ui_knob_png_start);
-    printf("Loading knob (%d)\n", sizeKnob);
-    gdk_pixbuf_loader_write(loaderKnob, knob_png, sizeKnob, &error);
-    private->knob = gdk_pixbuf_loader_get_pixbuf(loaderKnob);
-    gfree(loaderKnob);
-
-    for(int i = 0; i < 10; i++)
-        printf("%d: %02X\n", i, (unsigned char)*(_binary_ui_knob_png_start+i));
-
-    /*private->cursor = gdk_pixbuf_new_from_data (cursor_png,
-                              GDK_COLORSPACE_RGB,
-                              TRUE,
-                              8,
-                              6,
-                              6,
-                              24,
-                              NULL,
-                              NULL);// gdk_pixbuf_new_from_file("cursor.png", &error);
-    printf("Loading knob\n");*/
-    /*private->base = gdk_pixbuf_new_from_data (knob_png,
-                              GDK_COLORSPACE_RGB,
-                              FALSE,
-                              8,
-                              80,
-                              80,
-                              240,
-                              NULL,
-                              NULL);// gdk_pixbuf_new_from_file("knob.png", &error);
-*/
     // Create knob and overlay.
+
     inaudible_knob_set_hue(knob, 0);
 }
 
@@ -324,13 +293,12 @@ inaudible_knob_set_hue(InaudibleKnob* knob, guchar value)
     InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
 
     // Compute new hue from original hue.
-    value = private->hue - value;
+    value = value - private->hue;
     private->hue = value;
 
     inaudible_pixbuf_set_hue(private->knob, value);
 
     private->overlay = gdk_pixbuf_copy(private->knob);
-    inaudible_pixbuf_set_hue(private->overlay, value);
     inaudible_pixbuf_set_contrast(private->overlay, 1.3f);
 
     gtk_widget_queue_draw(GTK_WIDGET(knob));
