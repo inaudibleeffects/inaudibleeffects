@@ -1,7 +1,13 @@
 @prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
 
 <http://inaudibleeffects.github.io/echoizer>
 	a lv2:Plugin ;
 	lv2:binary <echoizer@LIB_EXT@>  ;
 	rdfs:seeAlso <echoizer.ttl> .
+
+<http://inaudibleeffects.github.io/echoizer#ui>
+    a ui:Gtk3UI ;
+    ui:binary <echoizer_ui@LIB_EXT@> ;
+    rdfs:seeAlso <echoizer.ttl> .

@@ -16,6 +16,10 @@
 #include "./uris.h"
 #include "./ui/knob.h"
 
+extern char _binary_ui_background_png_start[];
+extern char _binary_ui_background_png_size[];
+extern char _binary_ui_background_png_end[];
+
 #define ECHOIZER_UI_URI "http://inaudibleeffects.github.io/echoizer#ui"
 
 typedef struct {
@@ -36,6 +40,8 @@ typedef struct {
 
     uint8_t forge_buf[1024];
 } EchoizerUI;
+
+EchoizerUI* ui;
 
 /*
     Send current UI settings to backend.
@@ -148,7 +154,17 @@ send_ui_enable(LV2UI_Handle handle)
     );
 }*/
 
-
+void
+knob_value_changed(GtkRange* range,
+                   gpointer  user_data)
+{
+    if (range == GTK_RANGE(ui->knobDelay))
+        printf("Delay\n");
+    if (range == GTK_RANGE(ui->knobFeedback))
+        printf("Feedback\n");
+    if (range == GTK_RANGE(ui->knobBlend))
+        printf("Blend\n");
+}
 
 
 static LV2UI_Handle
@@ -162,20 +178,17 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 {
 
     printf("Instantiating UI...\n");
-    EchoizerUI* ui = (EchoizerUI*)malloc(sizeof(EchoizerUI));
-
-
+    ui = (EchoizerUI*)malloc(sizeof(EchoizerUI));
 
     // Check memory
     if (!ui) {
         fprintf(stderr, "Echoizer.lv2 UI: out of memory\n");
         return NULL;
     }
-
     // Initialize private data structure
     ui->write = write_function;
     ui->controller = controller;
-    *widget = NULL;
+
 
     // Get host features
     // Get host features
@@ -205,26 +218,55 @@ instantiate(const LV2UI_Descriptor*   descriptor,
     //gtk_container_add(GTK_CONTAINER(ui->window), ui->layout);
     //gtk_widget_show(ui->layout);
 
-    ui->image = gtk_image_new_from_file("background.png");
+
+    char* background_png;
+    background_png = _binary_ui_background_png_start;
+
+    GdkPixbufLoader *loader;
+    loader = gdk_pixbuf_loader_new();
+
+    GError* error = NULL;
+    ///http://stackoverflow.com/questions/14121166/gdk-pixbuf-load-image-from-memory
+    guint size = (unsigned int)(_binary_ui_background_png_end - _binary_ui_background_png_start);
+    printf("Loading background (%d)\n", size);
+    gdk_pixbuf_loader_write(loader, background_png, size, &error);
+    ui->image = gtk_image_new_from_pixbuf(gdk_pixbuf_loader_get_pixbuf(loader));
+    //printf("Null ? %d -> %s\n", ui->image == NULL ? 1 : 0, error->message);
+
+    //printf("Loading background (%d)\n", _binary_ui_background_png_size);
+    /*GdkPixbuf* background = gdk_pixbuf_new_from_data (background_png,
+                              GDK_COLORSPACE_RGB,
+                              FALSE,
+                              8,
+                              600,
+                              150,
+                              1800,
+                              NULL,
+                              NULL);
+    ui->image = gtk_image_new_from_pixbuf(background); //gtk_image_new_from_file("background.png");*/
     gtk_layout_put(GTK_LAYOUT(ui->layout), ui->image, 0, 0);
 
     ui->knobDelay = (InaudibleKnob*)inaudible_knob_new();
     gtk_layout_put(GTK_LAYOUT(ui->layout), (GtkWidget*)ui->knobDelay, 55, 35);
     gtk_widget_set_size_request((GtkWidget*)ui->knobDelay, 80, 80);
     inaudible_knob_set_hue(ui->knobDelay, 20);
+    g_signal_connect(ui->knobDelay, "value-changed", (GCallback)knob_value_changed, NULL);
 
     ui->knobFeedback = (InaudibleKnob*)inaudible_knob_new();
     gtk_layout_put(GTK_LAYOUT(ui->layout), (GtkWidget*)ui->knobFeedback, 174, 35);
     gtk_widget_set_size_request((GtkWidget*)ui->knobFeedback, 80, 80);
     inaudible_knob_set_hue(ui->knobFeedback, 20);
+    g_signal_connect(ui->knobFeedback, "value-changed", (GCallback)knob_value_changed, NULL);
+
 
     ui->knobBlend = (InaudibleKnob*)inaudible_knob_new();
     gtk_layout_put(GTK_LAYOUT(ui->layout), (GtkWidget*)ui->knobBlend, 293, 35);
     gtk_widget_set_size_request((GtkWidget*)ui->knobBlend, 80, 80);
     inaudible_knob_set_hue(ui->knobBlend, 20);
+    g_signal_connect(ui->knobBlend, "value-changed", (GCallback)knob_value_changed, NULL);
 
     // Request state (filename) from plugin
-	lv2_atom_forge_set_buffer(&ui->forge, ui->forge_buf, sizeof(ui->forge_buf));
+	/*lv2_atom_forge_set_buffer(&ui->forge, ui->forge_buf, sizeof(ui->forge_buf));
 	LV2_Atom_Forge_Frame frame;
 	LV2_Atom*            msg = (LV2_Atom*)lv2_atom_forge_object(
 		&ui->forge, &frame, 0, ui->uris.patch_Get);
@@ -232,10 +274,12 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	ui->write(ui->controller, 0, lv2_atom_total_size(msg),
 	          ui->uris.atom_eventTransfer,
-              msg);
+              msg);*/
 
 
     *widget = ui->layout;
+
+    gtk_widget_set_size_request(*widget, 600, 150);
 
     return ui;
 }
@@ -260,7 +304,7 @@ port_event(LV2UI_Handle handle,
            const void*  buffer)
 {
     EchoizerUI*      ui   = (EchoizerUI*)handle;
-	if (format == ui->uris.atom_eventTransfer) {
+	/*if (format == ui->uris.atom_eventTransfer) {
 		const LV2_Atom* atom = (const LV2_Atom*)buffer;
 		if (lv2_atom_forge_is_object_type(&ui->forge, atom->type)) {
 			const LV2_Atom_Object* obj = (const LV2_Atom_Object*)atom;
@@ -269,7 +313,7 @@ port_event(LV2UI_Handle handle,
 		}
 	} else {
 		//lv2_log_warning(&ui->logger, "Unknown port event format\n");
-}
+    }*/
 }
 
 /* Optional non-embedded UI show interface. */

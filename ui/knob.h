@@ -7,7 +7,6 @@
 #include <math.h>
 #include "utils/pixbuf.h"
 
-
 G_BEGIN_DECLS
 
 #define INAUDIBLE_TYPE_KNOB          (inaudible_knob_get_type())

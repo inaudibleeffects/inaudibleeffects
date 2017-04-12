@@ -35,7 +35,6 @@
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 
-
 #include "uris.h"
 
 #define ECHOIZER_URI "http://inaudibleeffects.github.io/echoizer"
@@ -169,15 +168,15 @@ activate(LV2_Handle instance)
 static void
 run(LV2_Handle handle, uint32_t samples)
 {
-    Echoizer* self = (Echoizer*)handle;
+    Echoizer* self      = (Echoizer*)handle;
 
-    const float*        input       = self->input;
-    float*              output      = self->output;
-    self->time        = *(self->port_time);
-    self->feedback    = *(self->port_feedback);
-    self->blend       = *(self->port_blend);
+    const float*input   = self->input;
+    float* output       = self->output;
+    self->time          = *(self->port_time);
+    self->feedback      = *(self->port_feedback);
+    self->blend         = *(self->port_blend);
 
-    const int           limit       = (int)(self->time / TIME_MAX * self->buffer_size);
+    const int limit     = (int)(self->time / TIME_MAX * self->buffer_size);
 
     /*
         Send settings to UI
@@ -227,7 +226,7 @@ state_save(LV2_Handle                instance,
            uint32_t                  flags,
            const LV2_Feature* const* features)
 {
-    Echoizer* self = (Echoizer*)instance;
+    /*Echoizer* self = (Echoizer*)instance;
 
     if (!self) {
         return LV2_STATE_SUCCESS;
@@ -249,7 +248,7 @@ state_save(LV2_Handle                instance,
           self->uris.ui_Blend,
           (void*)&self->blend, sizeof(float),
           self->uris.atom_Float,
-          LV2_STATE_IS_POD);
+          LV2_STATE_IS_POD);*/
 
     return LV2_STATE_SUCCESS;
 }
@@ -261,7 +260,7 @@ state_restore(LV2_Handle                  instance,
               uint32_t                    flags,
               const LV2_Feature* const*   features)
 {
-    Echoizer* self = (Echoizer*)instance;
+    /*Echoizer* self = (Echoizer*)instance;
 
     size_t   size;
     uint32_t type;
@@ -287,7 +286,7 @@ state_restore(LV2_Handle                  instance,
     {
         self->blend               = *((const float*)blend);
         self->send_settings_to_ui = true;
-    }
+    }*/
 
     return LV2_STATE_SUCCESS;
 }
