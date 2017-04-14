@@ -40,7 +40,7 @@ static gboolean inaudible_knob_value_changed(gpointer obj);
 //GType         inaudible_knob_get_type(void);
 gdouble         inaudible_knob_get_value(InaudibleKnob* knob);
 void            inaudible_knob_set_hue(InaudibleKnob* knob, guchar value);
-static void     inaudible_knob_set_range(InaudibleKnob* knob, gdouble min, gdouble max);
+void            inaudible_knob_set_range(InaudibleKnob* knob, gdouble min, gdouble max);
 static void     inaudible_knob_set_size(InaudibleKnob* knob, gint size);
 static void     inaudible_knob_set_value(InaudibleKnob* knob, gdouble value);
 static void     inaudible_knob_size_allocate(GtkWidget* widget, GdkRectangle* allocation);

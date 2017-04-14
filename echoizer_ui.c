@@ -159,11 +159,13 @@ knob_value_changed(GtkRange* range,
                    gpointer  user_data)
 {
     if (range == GTK_RANGE(ui->knobDelay))
-        printf("Delay\n");
+        printf("Delay");
     if (range == GTK_RANGE(ui->knobFeedback))
-        printf("Feedback\n");
+        printf("Feedback");
     if (range == GTK_RANGE(ui->knobBlend))
-        printf("Blend\n");
+        printf("Blend");
+
+    printf(" -> value : %f\n", gtk_range_get_value(range));
 }
 
 
@@ -221,7 +223,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
     GError* error = NULL;
 
     ui->image = gtk_image_new_from_pixbuf(
-        inaudible_pixbuf_load_from_data(
+        inaudible_pixbuf_new_from_data(
             _binary_ui_background_png_start,
             _binary_ui_background_png_end
         )
@@ -232,6 +234,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
     ui->knobDelay = (InaudibleKnob*)inaudible_knob_new();
     gtk_layout_put(GTK_LAYOUT(ui->layout), (GtkWidget*)ui->knobDelay, 55, 35);
     gtk_widget_set_size_request((GtkWidget*)ui->knobDelay, 80, 80);
+    inaudible_knob_set_range(ui->knobDelay, 1.f, 2000.f);
     //inaudible_knob_set_hue(ui->knobDelay, 20);
     g_signal_connect(ui->knobDelay, "value-changed", (GCallback)knob_value_changed, NULL);
 

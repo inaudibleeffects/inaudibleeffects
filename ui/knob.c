@@ -19,6 +19,7 @@ struct _InaudibleKnobPrivate
     gdouble dead_angle;         // Dead angle
     gdouble last_value;         // Last value set
     gdouble mouse_grab_y;       // Mouse position in Y axis
+    gdouble range;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE(InaudibleKnob, inaudible_knob, GTK_TYPE_RANGE)
@@ -163,10 +164,13 @@ inaudible_knob_motion_notify_event(GtkWidget*      widget,
 
     if (gtk_widget_has_grab(widget))
     {
-        gdouble max = gtk_adjustment_get_upper(gtk_range_get_adjustment(GTK_RANGE(knob)));
-        gdouble value = private->last_value - ((event->y - private->mouse_grab_y) / 200);
 
-        inaudible_knob_set_value(knob, value);
+        // TODO : Improve value computing from mouse grabbing.
+
+        gdouble max = gtk_adjustment_get_upper(gtk_range_get_adjustment(GTK_RANGE(knob)));
+        gdouble value = (private->last_value / private->range) - ((event->y - private->mouse_grab_y) / 200);
+
+        inaudible_knob_set_value(knob, value * private->range);
     }
 
     return TRUE;
@@ -204,15 +208,16 @@ inaudible_knob_init(InaudibleKnob* knob)
         NULL,
         NULL
     );
+    private->range = 1.0f;
 
     // Load pixbufs.
 
-    private->cursor = inaudible_pixbuf_load_from_data(
+    private->cursor = inaudible_pixbuf_new_from_data(
         _binary_ui_cursor_png_start,
         _binary_ui_cursor_png_end
     );
 
-    private->knob = inaudible_pixbuf_load_from_data(
+    private->knob = inaudible_pixbuf_new_from_data(
         _binary_ui_knob_png_start,
         _binary_ui_knob_png_end
     );
@@ -304,9 +309,11 @@ inaudible_knob_set_hue(InaudibleKnob* knob, guchar value)
     gtk_widget_queue_draw(GTK_WIDGET(knob));
 }
 
-static void
+void
 inaudible_knob_set_range(InaudibleKnob* knob, gdouble min, gdouble max)
 {
+    InaudibleKnobPrivate* private = inaudible_knob_get_instance_private(knob);
+    private->range = max - min;
     gtk_range_set_range(GTK_RANGE(knob), min, max);
 }
 
