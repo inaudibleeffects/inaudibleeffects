@@ -164,12 +164,8 @@ inaudible_knob_motion_notify_event(GtkWidget*      widget,
 
     if (gtk_widget_has_grab(widget))
     {
-
         // TODO : Improve value computing from mouse grabbing.
-
-        gdouble max = gtk_adjustment_get_upper(gtk_range_get_adjustment(GTK_RANGE(knob)));
         gdouble value = (private->last_value / private->range) - ((event->y - private->mouse_grab_y) / 200);
-
         inaudible_knob_set_value(knob, value * private->range);
     }
 
