@@ -19,7 +19,7 @@ inaudible_pixbuf_new_from_data(const char* start,
     Change contrast.
 */
 static void
-inaudible_pixbuf_set_contrast(GdkPixbuf* pixbuf,
+inaudible_pixbuf_set_luminosity(GdkPixbuf* pixbuf,
                               float factor)
 {
     int width   = gdk_pixbuf_get_width(pixbuf);
@@ -32,9 +32,9 @@ inaudible_pixbuf_set_contrast(GdkPixbuf* pixbuf,
 
     for (int i = 0; i < length; i += step)
     {
-        pixels[i] *= factor;
-        pixels[++i] *= factor;
-        pixels[++i] *= factor;
+        pixels[i] = fmax(fmin(pixels[i] * factor, 255), 0);
+        pixels[++i] = fmax(fmin(pixels[i] * factor, 255), 0);
+        pixels[++i] = fmax(fmin(pixels[i] * factor, 255), 0);
     }
 }
 

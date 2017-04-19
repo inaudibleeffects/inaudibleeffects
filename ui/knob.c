@@ -50,8 +50,8 @@ inaudible_knob_draw(GtkWidget *widget,
     int knob_y = oy - knob_height / 2;
 
     double rad = ((285 * (value / max)) - 325) / (180 / M_PI);
-    double cursor_x = -23.0 * sin(rad) + ox - (gdk_pixbuf_get_width(private->cursor) / 2);
-    double cursor_y = 23.0 * cos(rad) + oy - (gdk_pixbuf_get_height(private->cursor) / 2);
+    double cursor_x = -34.0 * sin(rad) + ox - (gdk_pixbuf_get_width(private->cursor) / 2);
+    double cursor_y = 34.0 * cos(rad) + oy - (gdk_pixbuf_get_height(private->cursor) / 2);
 
     GdkPixbuf* overlay = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, knob_width, knob_height);
     gdk_pixbuf_composite(private->overlay,
@@ -300,7 +300,7 @@ inaudible_knob_set_hue(InaudibleKnob* knob, guchar value)
     inaudible_pixbuf_set_hue(private->knob, value);
 
     private->overlay = gdk_pixbuf_copy(private->knob);
-    inaudible_pixbuf_set_contrast(private->overlay, 1.3f);
+    inaudible_pixbuf_set_luminosity(private->overlay, 1.15f);
 
     gtk_widget_queue_draw(GTK_WIDGET(knob));
 }
