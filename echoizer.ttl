@@ -17,19 +17,23 @@
    a ui:Gtk3UI ;
    ui:binary <echoizer_ui.so> ;
    ui:requiredFeature ui:makeResident ;
-   lv2:requiredFeature urid:map ;
    lv2:extensionData ui:showInterface .
 
 <http://inaudibleeffects.github.io/echoizer>
 	a lv2:Plugin ,
 		lv2:DelayPlugin ;
 	lv2:project <http://inaudibleeffects.github.io/echoizer> ;
-    lv2:requiredFeature state:loadDefaultState ,
-        urid:map ;
     lv2:optionalFeature lv2:hardRTCapable ;
     lv2:extensionData state:interface , work:interface ;
+
 	doap:name "Echoizer" ;
-	doap:license <http://opensource.org/licenses/isc> ;
+	doap:license <https://opensource.org/licenses/GPL-3.0> ;
+    doap:description "Simple audo delay processor";
+    doap:maintainer [
+            foaf:name "Cyriaque Skrapits" ;
+            foaf:homepage <http://inaudibleffects.github.io> ;
+            ] ;
+
     ui:ui <http://inaudibleeffects.github.io/echoizer#ui>;
 
 	lv2:port [
