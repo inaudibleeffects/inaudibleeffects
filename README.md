@@ -1,8 +1,8 @@
-# INAUDIBLE EFFECTS (GTK3 branch)
+# Inaudible Effects (GTK3 branch)
 Collection of experimental LV2 audio plugins.  
 This branch is dedicated to the GTK3 plugins port.
 
-** Disclaimer : you should not considerate using GTK3 to write audio plugins as they will not run on GTK2 hosts like Ardour ! This branch was solely made to show how to write a GTK3 LV2 plugin in C. **
+**Disclaimer : you should not considerate using GTK3 to write audio plugins as they will not run on GTK2 hosts like Ardour ! This branch was solely made to show how to write a GTK3 LV2 plugin in C.**
 
 ## Plugins
 
@@ -21,10 +21,12 @@ Simple delay processor with delay up to 2 seconds, feedback and blending control
 
 ## Installation
 
-* git clone -b gtk3 https://github.com/inaudibleeffects/inaudibleeffects
-* cd inaudibleeffects
-* make
-* sudo make install
+```
+git clone -b gtk3 https://github.com/inaudibleeffects/inaudibleeffects
+cd inaudibleeffects
+make
+sudo make install
+```
 
 ## Run
 
