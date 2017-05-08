@@ -6,3 +6,9 @@
 	a lv2:Plugin ;
 	lv2:binary <echoizer.so>  ;
 	rdfs:seeAlso <echoizer.ttl> .
+
+<http://inaudibleeffects.github.io/echoizer#ui>
+    a ui:Gtk3UI ;
+    ui:binary <echoizer_ui.so> ;
+    ui:requiredFeature ui:makeResident ;
+    lv2:extensionData ui:showInterface .

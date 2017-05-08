@@ -50,8 +50,8 @@ inaudible_knob_draw(GtkWidget *widget,
     int knob_y = oy - knob_height / 2;
 
     double rad = ((285 * (value / max)) - 325) / (180 / M_PI);
-    double cursor_x = -34.0 * sin(rad) + ox - (gdk_pixbuf_get_width(private->cursor) / 2);
-    double cursor_y = 34.0 * cos(rad) + oy - (gdk_pixbuf_get_height(private->cursor) / 2);
+    double cursor_x = -33.0 * sin(rad) + ox - (gdk_pixbuf_get_width(private->cursor) / 2);
+    double cursor_y = 33.0 * cos(rad) + oy - (gdk_pixbuf_get_height(private->cursor) / 2);
 
     GdkPixbuf* overlay = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, knob_width, knob_height);
     gdk_pixbuf_composite(private->overlay,
@@ -74,7 +74,11 @@ inaudible_knob_draw(GtkWidget *widget,
     gdk_cairo_set_source_pixbuf(cr, overlay, knob_x, knob_y);
     cairo_paint(cr);
 
-    gdk_cairo_set_source_pixbuf(cr, private->cursor, cursor_x,cursor_y);
+    //cairo_translate (cr, 40.0, 40.0);
+    //cairo_rotate(cr, rad);
+    //gdk_cairo_set_source_pixbuf(cr, private->cursor, -3, 31);
+
+    gdk_cairo_set_source_pixbuf(cr, private->cursor, cursor_x, cursor_y);
     cairo_paint(cr);
 
     /*cairo_select_font_face(cr, "Steelfish",
@@ -313,7 +317,7 @@ inaudible_knob_set_range(InaudibleKnob* knob, gdouble min, gdouble max)
     gtk_range_set_range(GTK_RANGE(knob), min, max);
 }
 
-static void
+void
 inaudible_knob_set_value(InaudibleKnob* knob, gdouble value)
 {
     gtk_range_set_value(GTK_RANGE(knob), value);

@@ -1,38 +1,28 @@
-@prefix atom:  <http://lv2plug.in/ns/ext/atom#> .
 @prefix doap:  <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 @prefix lv2:   <http://lv2plug.in/ns/lv2core#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix state: <http://lv2plug.in/ns/ext/state#> .
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
-@prefix urid: <http://lv2plug.in/ns/ext/urid#> .
-
-@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
-@prefix work:  <http://lv2plug.in/ns/ext/worker#> .
-@prefix param: <http://lv2plug.in/ns/ext/parameters#> .
-
-
-<http://inaudibleeffects.github.io/echoizer#ui>
-   a ui:Gtk3UI ;
-   ui:binary <echoizer_ui.so> ;
-   ui:requiredFeature ui:makeResident ;
-   lv2:extensionData ui:showInterface .
 
 <http://inaudibleeffects.github.io/echoizer>
 	a lv2:Plugin ,
 		lv2:DelayPlugin ;
 	lv2:project <http://inaudibleeffects.github.io/echoizer> ;
     lv2:optionalFeature lv2:hardRTCapable ;
-    lv2:extensionData state:interface , work:interface ;
+    #lv2:extensionData state:interface , work:interface ;
 
 	doap:name "Echoizer" ;
 	doap:license <https://opensource.org/licenses/GPL-3.0> ;
     doap:description "Simple audo delay processor";
     doap:maintainer [
-            foaf:name "Cyriaque Skrapits" ;
-            foaf:homepage <http://inaudibleffects.github.io> ;
-            ] ;
+        foaf:name "Inaudible Effects" ;
+        foaf:homepage <http://inaudibleffects.github.io> ;
+    ] ;
+
+    rdfs:comment "Test" ;
 
     ui:ui <http://inaudibleeffects.github.io/echoizer#ui>;
 

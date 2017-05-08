@@ -42,7 +42,7 @@ gdouble         inaudible_knob_get_value(InaudibleKnob* knob);
 void            inaudible_knob_set_hue(InaudibleKnob* knob, guchar value);
 void            inaudible_knob_set_range(InaudibleKnob* knob, gdouble min, gdouble max);
 static void     inaudible_knob_set_size(InaudibleKnob* knob, gint size);
-static void     inaudible_knob_set_value(InaudibleKnob* knob, gdouble value);
+void            inaudible_knob_set_value(InaudibleKnob* knob, gdouble value);
 static void     inaudible_knob_size_allocate(GtkWidget* widget, GdkRectangle* allocation);
 
 static gboolean inaudible_knob_on_tick(GtkWidget* widget, GdkFrameClock *frame_clock, gpointer data);

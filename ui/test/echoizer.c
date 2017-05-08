@@ -1,4 +1,4 @@
-#include "knob.h"
+#include "../knob.h"
 
 int main( int argc, char *argv[])
 {
@@ -19,7 +19,7 @@ int main( int argc, char *argv[])
     gtk_container_add(GTK_CONTAINER(window), layout);
     gtk_widget_show(layout);
 
-    image = gtk_image_new_from_file("background.png");
+    image = gtk_image_new_from_file("../background.png");
     gtk_layout_put(GTK_LAYOUT(layout), image, 0, 0);
 
     knobDelay = (InaudibleKnob*)inaudible_knob_new();
