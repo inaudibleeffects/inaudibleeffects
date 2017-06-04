@@ -27,6 +27,12 @@ inaudible_pixbuf_get_height(InaudiblePixbuf* pixbuf)
     return cairo_image_surface_get_height(pixbuf->surface);
 }
 
+cairo_surface_t*
+inaudible_pixbuf_get_surface(InaudiblePixbuf* pixbuf)
+{
+    return pixbuf->surface;
+}
+
 int
 inaudible_pixbuf_get_width(InaudiblePixbuf* pixbuf)
 {
