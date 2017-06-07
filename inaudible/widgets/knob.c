@@ -1,4 +1,4 @@
-#include "inaudible/widgets/knob.h"
+#include "widgets/knob.h"
 
 InaudibleKnob*
 inaudible_knob_new(InaudiblePixbuf* tiles)

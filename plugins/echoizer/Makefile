@@ -7,7 +7,6 @@ all: manifest.ttl echoizer.ttl echoizer.so echoizer_ui.so
 
 ui: cleanui
 	ld -r -b binary -o background.o background.png
-	ld -r -b binary -o cursor.o cursor.png
 	ld -r -b binary -o knob.o knob.png
 
 echoizer.so: echoizer.c
@@ -15,7 +14,15 @@ echoizer.so: echoizer.c
 
 echoizer_ui.so: echoizer_ui.c ui
 	#gcc `pkg-config --cflags --libs gtk+-3.0 lv2-gui` -lm -shared -fPIC -DPIC echoizer_ui.c background.o cursor.o knob.o -o echoizer_ui.so
-	gcc -DPUGL_HAVE_CAIRO -I $(LIBS_DIR) -lcairo -lX11 $(LIBS_DIR)/pugl/pugl_x11.c $(LIBS_DIR)/inaudible/*.c $(LIBS_DIR)/inaudible/widgets/image.c ./echoizer_ui.c background.o -o cairo
+	gcc -DPUGL_HAVE_CAIRO \
+		-I $(LIBS_DIR) \
+	 	-lcairo \
+		-lX11 \
+		$(LIBS_DIR)/pugl/pugl_x11.c\
+		$(LIBS_DIR)/*.c \
+		$(LIBS_DIR)/types/*.c \
+		$(LIBS_DIR)/widgets/*.c \
+		./echoizer_ui.c knob.o background.o -o cairo
 #
 # install: $(BUNDLE)
 # 	mkdir -p $(INSTALL_DIR)

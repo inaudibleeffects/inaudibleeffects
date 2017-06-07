@@ -1,4 +1,4 @@
 include ../../Makefile.mk
 
-LIBS_DIR = ../../libs
+LIBS_DIR = ../../inaudible
 DEST_DIR = ../../$(BUNDLE)

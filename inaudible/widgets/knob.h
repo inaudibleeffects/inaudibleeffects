@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "inaudible/widget.h"
+#include "widget.h"
 
 typedef struct
 {

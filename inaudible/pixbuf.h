@@ -7,7 +7,7 @@
 
 #include <cairo/cairo.h>
 
-#include "inaudible/macros.h"
+#include "macros.h"
 
 typedef struct
 {

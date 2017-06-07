@@ -1,16 +1,16 @@
-#include "inaudible/widgets/image.h"
+#include "widgets/image.h"
 
 InaudibleImage*
-inaudible_image_new(const char* stream, const size_t size)
+inaudible_image_new(InaudiblePixbuf* pixbuf)
 {
     InaudibleImage* image = INAUDIBLE_NEW(InaudibleImage);
-    image->pixbuf = inaudible_pixbuf_new(stream, size);
+    image->pixbuf = pixbuf;
 }
 
 void
 inaudible_image_destroy(InaudibleImage* image)
 {
-    INAUDIBLE_DESTROY(image->pixbuf);
+    //INAUDIBLE_DESTROY(image->pixbuf);
     INAUDIBLE_DESTROY(image);
 }
 

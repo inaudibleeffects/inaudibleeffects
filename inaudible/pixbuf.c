@@ -1,4 +1,4 @@
-#include "inaudible/pixbuf.h"
+#include "pixbuf.h"
 
 InaudiblePixbuf*
 inaudible_pixbuf_new(const char* data, size_t size)
@@ -17,8 +17,7 @@ void
 inaudible_pixbuf_destroy(InaudiblePixbuf* pixbuf)
 {
     cairo_surface_destroy(pixbuf->surface);
-    free(pixbuf);
-    pixbuf = NULL;
+    INAUDIBLE_DESTROY(pixbuf);
 }
 
 int

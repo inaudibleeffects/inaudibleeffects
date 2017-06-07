@@ -1,12 +1,11 @@
 #ifndef __INAUDIBLE_WIDGET_H__
 #define __INAUDIBLE_WIDGET_H__
 
-#include "inaudible/drawable.h"
-#include "inaudible/macros.h"
-#include "inaudible/pixbuf.h"
+#include "drawable.h"
+#include "macros.h"
+#include "pixbuf.h"
 
-typedef struct
-{
+typedef struct {
     InaudibleDrawable base;
 
     int x;
