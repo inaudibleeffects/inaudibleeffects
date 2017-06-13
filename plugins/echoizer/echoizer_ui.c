@@ -55,11 +55,17 @@ main(int argc, char** argv)
 
     printf("Loading view...\n");
 
-    window = inaudible_window_new("Echoizer", 600, 115, false);
+    window = inaudible_window_new("Echoizer", 600, 150, false);
+
+    printf("Loading window...\n");
 
     inaudible_app_show_window(window);
 
+    printf("Running app...\n");
+
     inaudible_app_run();
+
+    printf("Removing resources...\n");
 
     inaudible_image_destroy(image);
     inaudible_pixbuf_destroy(backgroundPixbuf);
