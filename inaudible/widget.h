@@ -6,8 +6,8 @@
 #include "pixbuf.h"
 
 typedef struct {
-    InaudibleDrawable base;
-
+    void* child;
+    void (*draw)(void* widget, cairo_t* context);
     int x;
     int y;
 } InaudibleWidget;

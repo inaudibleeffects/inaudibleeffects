@@ -52,9 +52,9 @@ inaudible_window_show(InaudibleWindow* window)
 
 void
 inaudible_window_add_widget(InaudibleWindow* window,
-                            InaudibleWidget* widget)
+                            InaudibleWidget** widget)
 {
-    //inaudible_linkedlist_add(window->widgets, widget);
+    inaudible_linkedlist_add(&(window->widgets), widget);
 }
 
 static void
@@ -62,13 +62,16 @@ onDisplay(PuglView* view)
 {
 	cairo_t* cr = puglGetContext(view);
 
-    /*InaudibleWindow* window = inaudible_dictionary_get_value(views, view);
+    InaudibleWindow* window = inaudible_dictionary_get_value(views, view);
+
     InaudibleLinkedList* widgets = window->widgets;
+    InaudibleWidget* widget = widgets->data;
 
-    while (widgets)
+    //while (widgets)
     {
-
-    }*/
+        widget->draw(widget->child, cr);
+        //widgets = widgets->next;
+    }
 
     printf("Done\n");
 }

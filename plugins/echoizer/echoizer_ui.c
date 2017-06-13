@@ -56,6 +56,7 @@ main(int argc, char** argv)
     printf("Loading view...\n");
 
     window = inaudible_window_new("Echoizer", 600, 150, false);
+    inaudible_window_add_widget(window, &(image->parent));
 
     printf("Loading window...\n");
 
