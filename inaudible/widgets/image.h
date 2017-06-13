@@ -5,6 +5,7 @@
 
 typedef struct
 {
+    //InaudibleWidget* parent;
     InaudiblePixbuf* pixbuf;
 } InaudibleImage;
 

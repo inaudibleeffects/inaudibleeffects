@@ -1,6 +1,7 @@
 #ifndef __INAUDIBLE_APP_H__
 #define __INAUDIBLE_APP_H__
 
+#include "types/linkedlist.h"
 #include "window.h"
 
 typedef struct {
@@ -9,12 +10,13 @@ typedef struct {
     //InaudibleWindow* window;
 } InaudibleApp;
 
-static InaudibleApp* app;
+InaudibleApp* app;
 
 void          inaudible_app();
 void          inaudible_app_run();
 void          inaudible_app_quit();
 
 void          inaudible_app_show_window(InaudibleWindow* window);
+void          inaudible_app_close_window(InaudibleWindow* window);
 
-#endif
+#endif //__INAUDIBLE_APP_H__

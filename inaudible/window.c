@@ -1,4 +1,5 @@
 #include "window.h"
+#include "app.h"
 
 InaudibleWindow* inaudible_window_new(const char* title,
                                       const int   width,
@@ -17,23 +18,57 @@ InaudibleWindow* inaudible_window_new(const char* title,
 
     puglCreateWindow(view, title);
 
+    self->state = 0;
     self->title = title;
     self->view = view;
     self->widgets = INAUDIBLE_NEW(InaudibleLinkedList);
+
+    inaudible_dictionary_add(&views, view, self);
+
+    return self;
 }
 
 void
 inaudible_window_destroy(InaudibleWindow* window)
 {
+    inaudible_dictionary_remove(&views, window->view);
     puglDestroy(window->view);
-    //INAUDIBLE_DESTROY(widgets);
+    INAUDIBLE_DESTROY(window->widgets);
     INAUDIBLE_DESTROY(window);
+}
+
+void
+inaudible_window_close(InaudibleWindow* window)
+{
+    window->state = 1;
+}
+
+void
+inaudible_window_show(InaudibleWindow* window)
+{
+    printf("Showing window...\n");
+    puglShowWindow(window->view);
+}
+
+void
+inaudible_window_add_widget(InaudibleWindow* window,
+                            InaudibleWidget* widget)
+{
+    //inaudible_linkedlist_add(window->widgets, widget);
 }
 
 static void
 onDisplay(PuglView* view)
 {
 	cairo_t* cr = puglGetContext(view);
+
+    /*InaudibleWindow* window = inaudible_dictionary_get_value(views, view);
+    InaudibleLinkedList* widgets = window->widgets;
+
+    while (widgets)
+    {
+
+    }*/
 
     printf("Done\n");
 }
@@ -42,13 +77,15 @@ static void
 onClose(PuglView* view)
 {
     printf("Closing window...\n");
-    puglDestroy(view);
+    InaudibleWindow* window = inaudible_dictionary_get_value(views, view);
+    inaudible_app_close_window(window);
 }
 
 static void
 onEvent(PuglView*        view,
         const PuglEvent* event)
 {
+    printf("onEvent\n");
 	switch (event->type)
     {
     	case PUGL_KEY_PRESS:
@@ -85,19 +122,8 @@ onEvent(PuglView*        view,
 	}
 }
 
-void
-inaudible_window_show(InaudibleWindow* window)
-{
-    printf("%d - %s\n", &window, window->title);
-    puglShowWindow(window->view);
-}
 
-void
-inaudible_window_add_widget(InaudibleWindow* window, InaudibleWidget* widget)
-{
-
-}
-
+// TODO : Remove ?
 PuglView*
 inaudible_window_get_view(InaudibleWindow* window)
 {
