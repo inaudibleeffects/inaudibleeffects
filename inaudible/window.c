@@ -24,15 +24,12 @@ InaudibleWindow* inaudible_window_new(const char* title,
     self->view = view;
     self->widgets = INAUDIBLE_NEW(InaudibleLinkedList);
 
-    inaudible_dictionary_add(&views, view, self);
-
     return self;
 }
 
 void
 inaudible_window_destroy(InaudibleWindow* window)
 {
-    inaudible_dictionary_remove(&views, window->view);
     puglDestroy(window->view);
     INAUDIBLE_DESTROY(window->widgets);
     INAUDIBLE_DESTROY(window);

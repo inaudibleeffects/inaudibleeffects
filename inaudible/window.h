@@ -14,8 +14,6 @@ typedef struct {
     InaudibleLinkedList* widgets;
 } InaudibleWindow;
 
-static InaudibleDictionary* views;
-
 InaudibleWindow* inaudible_window_new(const char* title, const int width, const int height, bool resizable);
 void             inaudible_window_destroy(InaudibleWindow* window);
 
