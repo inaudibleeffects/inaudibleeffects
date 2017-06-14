@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+#include "pixbuf.h"
 #include "widget.h"
 
 typedef struct

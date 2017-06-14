@@ -1,15 +1,14 @@
 #ifndef __INAUDIBLE_WIDGET_H__
 #define __INAUDIBLE_WIDGET_H__
 
-#include "drawable.h"
+#include <cairo/cairo.h>
 #include "macros.h"
-#include "pixbuf.h"
 
 typedef struct {
-    void* child;
-    void (*draw)(void* widget, cairo_t* context);
     int x;
     int y;
+    void* child;
+    void (*draw)(void* widget, cairo_t* context);
 } InaudibleWidget;
 
 #endif

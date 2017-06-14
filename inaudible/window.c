@@ -14,11 +14,12 @@ InaudibleWindow* inaudible_window_new(const char* title,
     puglInitContextType(view, PUGL_CAIRO);
 
     puglIgnoreKeyRepeat(view, true);
+    puglSetHandle(view, self);
     puglSetEventFunc(view, onEvent);
 
     puglCreateWindow(view, title);
 
-    self->state = 0;
+    self->closing = false;
     self->title = title;
     self->view = view;
     self->widgets = INAUDIBLE_NEW(InaudibleLinkedList);
@@ -40,13 +41,12 @@ inaudible_window_destroy(InaudibleWindow* window)
 void
 inaudible_window_close(InaudibleWindow* window)
 {
-    window->state = 1;
+    window->closing = true;
 }
 
 void
 inaudible_window_show(InaudibleWindow* window)
 {
-    printf("Showing window...\n");
     puglShowWindow(window->view);
 }
 
@@ -60,27 +60,25 @@ inaudible_window_add_widget(InaudibleWindow* window,
 static void
 onDisplay(PuglView* view)
 {
-	cairo_t* cr = puglGetContext(view);
+    cairo_t* cr = puglGetContext(view);
 
-    InaudibleWindow* window = inaudible_dictionary_get_value(views, view);
+    InaudibleWindow* window = puglGetHandle(view);
 
     InaudibleLinkedList* widgets = window->widgets;
-    InaudibleWidget* widget = widgets->data;
+    InaudibleWidget* widget;
 
-    //while (widgets)
+    while (widgets)
     {
+        widget = inaudible_linkedlist_get_value(widgets);
         widget->draw(widget->child, cr);
-        //widgets = widgets->next;
+        widgets = widgets->next;
     }
-
-    printf("Done\n");
 }
 
 static void
 onClose(PuglView* view)
 {
-    printf("Closing window...\n");
-    InaudibleWindow* window = inaudible_dictionary_get_value(views, view);
+    InaudibleWindow* window = puglGetHandle(view);
     inaudible_app_close_window(window);
 }
 
@@ -88,8 +86,7 @@ static void
 onEvent(PuglView*        view,
         const PuglEvent* event)
 {
-    printf("onEvent\n");
-	switch (event->type)
+    switch (event->type)
     {
     	case PUGL_KEY_PRESS:
     		if (event->key.character == 'q' ||
@@ -122,7 +119,7 @@ onEvent(PuglView*        view,
     		onClose(view);
     		break;
     	default: break;
-	}
+    }
 }
 
 

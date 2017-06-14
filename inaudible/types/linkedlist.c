@@ -53,6 +53,12 @@ inaudible_linkedlist_count(InaudibleLinkedList* list)
     return i;
 }
 
+void*
+inaudible_linkedlist_get_value(InaudibleLinkedList* list)
+{
+    return list->data;
+}
+
 void inaudible_linkedlist_remove(InaudibleLinkedList** list,
                                  void*                 data)
 {

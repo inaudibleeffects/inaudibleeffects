@@ -24,6 +24,7 @@ void
 inaudible_image_draw(void* widget, cairo_t* context)
 {
     InaudibleImage* image = widget;
-    cairo_set_source_surface(context, image->pixbuf->surface, 0, 0);
+    InaudibleWidget* base = image->parent; // TODO : Refactor
+    cairo_set_source_surface(context, image->pixbuf->surface, base->x, base->y);
     cairo_paint(context);
 }

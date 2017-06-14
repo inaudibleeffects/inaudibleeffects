@@ -1,5 +1,7 @@
 #include "app.h"
 
+#include <stdio.h>
+
 void
 inaudible_app()
 {
@@ -19,7 +21,7 @@ inaudible_app_run()
         puglWaitForEvent(window->view);
         puglProcessEvents(window->view);
 
-        if (window->state == 1)
+        if (window->closing)
             break;
 
         if (windows->next != NULL)

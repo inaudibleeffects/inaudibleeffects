@@ -1,6 +1,7 @@
 #ifndef __INAUDIBLE_WIDGET_IMAGE_H__
 #define __INAUDIBLE_WIDGET_IMAGE_H__
 
+#include "pixbuf.h"
 #include "widget.h"
 
 typedef struct
