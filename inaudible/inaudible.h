@@ -2,6 +2,7 @@
 #define __INAUDIBLE_H__
 
 #include "app.h"
+#include "widget.h"
 #include "widgets/image.h"
 #include "widgets/knob.h"
 

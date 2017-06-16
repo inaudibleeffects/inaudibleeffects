@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 InaudibleLinkedList*
-inaudible_linkedlist_new(void* data)
+inaudible_linkedlist_new()
 {
     return NULL;
 }
@@ -25,31 +25,38 @@ inaudible_linkedlist_add(InaudibleLinkedList** list,
 {
     InaudibleLinkedList* root = *list;
 
-    while (root)
+    // Create new node.
+    InaudibleLinkedList* new = INAUDIBLE_NEW(InaudibleLinkedList);
+    new->data = data;
+    new->next = NULL;
+
+    // Add at root if list is empty.
+    if (!*list)
     {
-        // Don't add the same key.
-        if (root->data == data)
-            return;
-
-        root = root->next;
+        *list = new;
+        return;
     }
-    printf("DAYUM\n");
-    root = INAUDIBLE_NEW(InaudibleLinkedList);
-    root->data = data;
-    root->next = NULL;
 
-    *list = root;
+    // Put it at the end.
+    while (root->next)
+        root = root->next;
+
+    root->next = new;
 }
 
 int
 inaudible_linkedlist_count(InaudibleLinkedList* list)
 {
+    InaudibleLinkedList* root = list;
+
     int i = 0;
-    while (list)
+
+    while (root)
     {
         i++;
-        list = list->next;
+        root = root->next;
     }
+
     return i;
 }
 

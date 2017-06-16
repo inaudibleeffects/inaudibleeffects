@@ -8,7 +8,7 @@ typedef struct linkedlist {
     struct linkedlist* next;
 } InaudibleLinkedList;
 
-InaudibleLinkedList* inaudible_linkedlist_new(void* data);
+InaudibleLinkedList* inaudible_linkedlist_new();
 void                 inaudible_linkedlist_destroy(InaudibleLinkedList* list);
 
 void                 inaudible_linkedlist_add(InaudibleLinkedList** list, void* data);

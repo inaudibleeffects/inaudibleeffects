@@ -23,7 +23,7 @@ InaudibleWindow* inaudible_window_new(const char* title,
     self->closing = false;
     self->title = title;
     self->view = view;
-    self->widgets = INAUDIBLE_NEW(InaudibleLinkedList);
+    self->widgets = inaudible_linkedlist_new();
 
     return self;
 }
@@ -53,7 +53,6 @@ inaudible_window_add_widget(InaudibleWindow* window,
                             InaudibleWidget* widget)
 {
     inaudible_linkedlist_add(&(window->widgets), widget);
-    printf("Widgets : %d\n", inaudible_linkedlist_count(window->widgets));
 }
 
 static void
@@ -62,14 +61,12 @@ onDisplay(PuglView* view)
     cairo_t* cr = puglGetContext(view);
 
     InaudibleWindow* window = puglGetHandle(view);
-
     InaudibleLinkedList* widgets = window->widgets;
     InaudibleWidget* widget;
-    printf("Widgets to render : %d\n", inaudible_linkedlist_count(widgets));
+
     while (widgets)
     {
         widget = inaudible_linkedlist_get_value(widgets);
-        printf("Widget->x : %p\n", &widget);
         widget->draw(widget, cr);
         widgets = widgets->next;
     }

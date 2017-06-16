@@ -13,7 +13,7 @@ inaudible_knob_new(InaudiblePixbuf* tiles)
 
     inaudible_knob_set_tiles(knob, tiles);
 
-    widget->x = 40;
+    widget->x = 0;
     widget->y = 0;
     widget->child = knob;
 
@@ -41,7 +41,7 @@ inaudible_knob_draw(void* widget, cairo_t* context)
     int width = inaudible_pixbuf_get_width(knob->tiles);
 
     cairo_set_source_surface(context, inaudible_pixbuf_get_surface(knob->tiles), w->x, w->y);
-    cairo_rectangle(context, 0, 0, knob->size, knob->size);
+    cairo_rectangle(context, w->x, w->y, knob->size, knob->size);
 }
 
 bool
@@ -50,7 +50,7 @@ inaudible_knob_set_tiles(InaudibleKnob* knob, InaudiblePixbuf* pixbuf)
     int height = inaudible_pixbuf_get_height(pixbuf);
     int width = inaudible_pixbuf_get_width(pixbuf);
 
-    printf("Height : %d ; Width : %d\n", height, width);
+    //printf("Height : %d ; Width : %d\n", height, width);
 
     if (height % width > 0)
         return false;

@@ -49,6 +49,8 @@ main(int argc, char** argv)
 
     knobPixbuf = inaudible_pixbuf_new(start, size);
     knob = inaudible_knob_new(knobPixbuf);
+    knob->x = 54;
+    knob->y = 36;
 
     printf("Loading view...\n");
 

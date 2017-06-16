@@ -16,21 +16,28 @@ void inaudible_dictionary_add(InaudibleDictionary** dictionary,
 {
     InaudibleDictionary* root = *dictionary;
 
-    while (root)
+    // Create new node.
+    InaudibleDictionary* new = INAUDIBLE_NEW(InaudibleDictionary);
+    new->key = key;
+    new->value = value;
+    new->next = NULL;
+
+    // Add at root if dictionary is empty.
+    if (!*dictionary)
     {
-        // Don't add the same key.
+        *dictionary = new;
+        return;
+    }
+
+    // Put it at the end.
+    while (root->next)
+    {
         if (root->key == key)
             return;
-
         root = root->next;
     }
 
-    root = INAUDIBLE_NEW(InaudibleDictionary);
-    root->key = key;
-    root->value = value;
-    root->next = NULL;
-
-    *dictionary = root;
+    root->next = new;
 }
 
 void inaudible_dictionary_remove(InaudibleDictionary** dictionary,
