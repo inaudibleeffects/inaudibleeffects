@@ -19,7 +19,7 @@ void             inaudible_window_destroy(InaudibleWindow* window);
 
 void             inaudible_window_close(InaudibleWindow* window);
 void             inaudible_window_show(InaudibleWindow* window);
-void             inaudible_window_add_widget(InaudibleWindow* window, InaudibleWidget** widget);
+void             inaudible_window_add_widget(InaudibleWindow* window, InaudibleWidget* widget);
 PuglView*        inaudible_window_get_view(InaudibleWindow* window);
 
 static void      onDisplay(PuglView* view);

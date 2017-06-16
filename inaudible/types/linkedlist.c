@@ -33,7 +33,7 @@ inaudible_linkedlist_add(InaudibleLinkedList** list,
 
         root = root->next;
     }
-
+    printf("DAYUM\n");
     root = INAUDIBLE_NEW(InaudibleLinkedList);
     root->data = data;
     root->next = NULL;

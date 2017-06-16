@@ -1,30 +1,38 @@
 #include "widgets/image.h"
+#include <stdio.h>
 
-InaudibleImage*
+InaudibleWidget*
 inaudible_image_new(InaudiblePixbuf* pixbuf)
 {
+    InaudibleWidget* widget = INAUDIBLE_NEW(InaudibleWidget);
     InaudibleImage* image = INAUDIBLE_NEW(InaudibleImage);
+
     image->pixbuf = pixbuf;
 
-    image->parent = INAUDIBLE_NEW(InaudibleWidget);
-    image->parent->x = 0;
-    image->parent->y = 0;
-    image->parent->child = image;
-    image->parent->draw = &inaudible_image_draw;
+    widget->x = 0;
+    widget->y = 0;
+    widget->child = image;
+
+    widget->destroy = &inaudible_image_destroy;
+    widget->draw = &inaudible_image_draw;
+
+    return widget;
 }
 
 void
-inaudible_image_destroy(InaudibleImage* image)
+inaudible_image_destroy(void* widget)
 {
-    //INAUDIBLE_DESTROY(image->pixbuf);
-    INAUDIBLE_DESTROY(image);
+    InaudibleWidget* w = widget;
+    INAUDIBLE_DESTROY(w->child);
+    INAUDIBLE_DESTROY(w);
 }
 
 void
 inaudible_image_draw(void* widget, cairo_t* context)
 {
-    InaudibleImage* image = widget;
-    InaudibleWidget* base = image->parent; // TODO : Refactor
+    InaudibleWidget* base = widget; // TODO : Refactor
+    InaudibleImage* image = base->child;
+
     cairo_set_source_surface(context, image->pixbuf->surface, base->x, base->y);
     cairo_paint(context);
 }

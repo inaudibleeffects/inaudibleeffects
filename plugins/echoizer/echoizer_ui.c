@@ -8,20 +8,17 @@
 
 #include "inaudible.h"
 
-
 extern char _binary_knob_png_start[];
 extern char _binary_knob_png_end[];
 
 extern char _binary_background_png_start[];
 extern char _binary_background_png_end[];
 
-static InaudibleImage* image;
+static InaudibleWidget* image;
+static InaudibleWidget* knob;
 static InaudiblePixbuf* backgroundPixbuf;
 static InaudiblePixbuf* knobPixbuf;
-static InaudibleKnob* knob;
 static InaudibleWindow* window;
-//static InaudibleKnob* knob;
-
 
 int
 main(int argc, char** argv)
@@ -56,7 +53,8 @@ main(int argc, char** argv)
     printf("Loading view...\n");
 
     window = inaudible_window_new("Echoizer", 600, 150, false);
-    inaudible_window_add_widget(window, &(image->parent));
+    inaudible_window_add_widget(window, image);
+    inaudible_window_add_widget(window, knob);
 
     printf("Loading window...\n");
 
@@ -68,10 +66,10 @@ main(int argc, char** argv)
 
     printf("Removing resources...\n");
 
-    inaudible_image_destroy(image);
+    inaudible_widget_destroy(image);
+    inaudible_widget_destroy(knob);
     inaudible_pixbuf_destroy(backgroundPixbuf);
     inaudible_pixbuf_destroy(knobPixbuf);
-    inaudible_knob_destroy(knob);
     inaudible_window_destroy(window);
 
     inaudible_app_quit();

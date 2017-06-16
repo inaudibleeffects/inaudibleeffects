@@ -1,5 +1,6 @@
 #include "window.h"
 #include "app.h"
+#include <stdio.h>
 
 InaudibleWindow* inaudible_window_new(const char* title,
                                       const int   width,
@@ -49,9 +50,10 @@ inaudible_window_show(InaudibleWindow* window)
 
 void
 inaudible_window_add_widget(InaudibleWindow* window,
-                            InaudibleWidget** widget)
+                            InaudibleWidget* widget)
 {
     inaudible_linkedlist_add(&(window->widgets), widget);
+    printf("Widgets : %d\n", inaudible_linkedlist_count(window->widgets));
 }
 
 static void
@@ -63,13 +65,16 @@ onDisplay(PuglView* view)
 
     InaudibleLinkedList* widgets = window->widgets;
     InaudibleWidget* widget;
-
+    printf("Widgets to render : %d\n", inaudible_linkedlist_count(widgets));
     while (widgets)
     {
         widget = inaudible_linkedlist_get_value(widgets);
-        widget->draw(widget->child, cr);
+        printf("Widget->x : %p\n", &widget);
+        widget->draw(widget, cr);
         widgets = widgets->next;
     }
+
+    cairo_fill(cr);
 }
 
 static void

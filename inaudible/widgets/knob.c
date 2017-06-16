@@ -1,8 +1,9 @@
 #include "widgets/knob.h"
 
-InaudibleKnob*
+InaudibleWidget*
 inaudible_knob_new(InaudiblePixbuf* tiles)
 {
+    InaudibleWidget* widget = INAUDIBLE_NEW(InaudibleWidget);
     InaudibleKnob* knob = INAUDIBLE_NEW(InaudibleKnob);
     //knob->base = INAUDIBLE_NEW(InaudibleDrawable);
 
@@ -12,28 +13,35 @@ inaudible_knob_new(InaudiblePixbuf* tiles)
 
     inaudible_knob_set_tiles(knob, tiles);
 
-    return knob;
+    widget->x = 40;
+    widget->y = 0;
+    widget->child = knob;
+
+    widget->destroy = &inaudible_knob_destroy;
+    widget->draw = &inaudible_knob_draw;
+
+    return widget;
 }
 
 void
-inaudible_knob_destroy(InaudibleKnob* knob)
+inaudible_knob_destroy(void* widget)
 {
-    //inaudible_pixbuf_destroy(knob->tiles);
-    //INAUDIBLE_DESTROY(knob.base);
-    INAUDIBLE_DESTROY(knob);
+    InaudibleWidget* w = widget;
+    INAUDIBLE_DESTROY(w->child);
+    INAUDIBLE_DESTROY(w);
 }
 
 void
-inaudible_knob_draw(InaudibleKnob* knob, cairo_t* context)
+inaudible_knob_draw(void* widget, cairo_t* context)
 {
+    InaudibleWidget* w = widget;
+    InaudibleKnob* knob = w->child;
+
     int height = inaudible_pixbuf_get_height(knob->tiles);
     int width = inaudible_pixbuf_get_width(knob->tiles);
 
-    printf("Height : %d ; Width : %d\n", height, width);
-
-    cairo_set_source_surface(context, inaudible_pixbuf_get_surface(knob->tiles), 0, 0);
+    cairo_set_source_surface(context, inaudible_pixbuf_get_surface(knob->tiles), w->x, w->y);
     cairo_rectangle(context, 0, 0, knob->size, knob->size);
-    cairo_fill(context);
 }
 
 bool

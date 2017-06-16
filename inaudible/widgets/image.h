@@ -6,13 +6,12 @@
 
 typedef struct
 {
-    InaudibleWidget* parent;
     InaudiblePixbuf* pixbuf;
 } InaudibleImage;
 
-InaudibleImage* inaudible_image_new(InaudiblePixbuf* pixbuf);
-void            inaudible_image_destroy(InaudibleImage* image);
+InaudibleWidget* inaudible_image_new(InaudiblePixbuf* pixbuf);
+void             inaudible_image_destroy(void* widget);
 
-void            inaudible_image_draw(void* widget, cairo_t* context);
+void             inaudible_image_draw(void* widget, cairo_t* context);
 
 #endif

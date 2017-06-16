@@ -8,4 +8,6 @@
     free(object); \
     object = NULL
 
+#define INAUDIBLE_WIDGET(widget) &(widget->parent))
+
 #endif

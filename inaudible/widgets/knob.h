@@ -8,8 +8,6 @@
 
 typedef struct
 {
-    InaudibleWidget* parent;
-
     int number_of_tiles;
     int size;
     float max;
@@ -20,9 +18,10 @@ typedef struct
 
 } InaudibleKnob;
 
-InaudibleKnob*  inaudible_knob_new(InaudiblePixbuf* tiles);
-void            inaudible_knob_destroy(InaudibleKnob* knob);
-void            inaudible_knob_draw(InaudibleKnob* knob, cairo_t* context);
+InaudibleWidget*  inaudible_knob_new(InaudiblePixbuf* tiles);
+void            inaudible_knob_destroy(void* knob);
+
+void            inaudible_knob_draw(void* knob, cairo_t* context);
 bool            inaudible_knob_set_tiles(InaudibleKnob* knob, InaudiblePixbuf* tiles);
 
 #endif
