@@ -12,6 +12,8 @@ typedef struct {
     const char*          title;
     PuglView*            view;
     InaudibleLinkedList* widgets;
+
+    void                 (*onMouseMove)(const int x, const int y);
 } InaudibleWindow;
 
 InaudibleWindow* inaudible_window_new(const char* title, const int width, const int height, bool resizable);

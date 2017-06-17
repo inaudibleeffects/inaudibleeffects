@@ -18,10 +18,11 @@ typedef struct
 
 } InaudibleKnob;
 
-InaudibleWidget*  inaudible_knob_new(InaudiblePixbuf* tiles);
-void            inaudible_knob_destroy(void* knob);
+InaudibleWidget* inaudible_knob_new(InaudiblePixbuf* tiles);
+void             inaudible_knob_destroy(void* knob);
 
-void            inaudible_knob_draw(void* knob, cairo_t* context);
-bool            inaudible_knob_set_tiles(InaudibleKnob* knob, InaudiblePixbuf* tiles);
+void             inaudible_knob_draw(void* knob, cairo_t* context);
+bool             inaudible_knob_set_tiles(InaudibleKnob* knob, InaudiblePixbuf* tiles);
+void             inaudible_knob_set_value(InaudibleKnob* knob, int value);
 
 #endif

@@ -20,6 +20,11 @@ static InaudiblePixbuf* backgroundPixbuf;
 static InaudiblePixbuf* knobPixbuf;
 static InaudibleWindow* window;
 
+void onMouseMove(const int x, const int y)
+{
+    inaudible_knob_set_value(knob->child, x);
+}
+
 int
 main(int argc, char** argv)
 {
@@ -57,6 +62,8 @@ main(int argc, char** argv)
     window = inaudible_window_new("Echoizer", 600, 150, false);
     inaudible_window_add_widget(window, image);
     inaudible_window_add_widget(window, knob);
+
+    window->onMouseMove = &onMouseMove;
 
     printf("Loading window...\n");
 

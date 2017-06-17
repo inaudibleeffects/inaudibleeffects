@@ -81,6 +81,13 @@ onClose(PuglView* view)
     inaudible_app_close_window(window);
 }
 
+static void onMotion(PuglView *view, const PuglEvent* event) {
+    InaudibleWindow* window = puglGetHandle(view);
+    if (window->onMouseMove)
+        window->onMouseMove(event->motion.x, event->motion.y);
+    onDisplay(view);
+}
+
 static void
 onEvent(PuglView*        view,
         const PuglEvent* event)
@@ -108,6 +115,9 @@ onEvent(PuglView*        view,
     	case PUGL_LEAVE_NOTIFY:
     		//puglPostRedisplay(view);
     		break;
+        case PUGL_MOTION_NOTIFY:
+            onMotion(view, event);
+            break;
         case PUGL_SCROLL:
             //printf("Scroll : %f\n", event->scroll.dy); // For futur purpose.
             break;
