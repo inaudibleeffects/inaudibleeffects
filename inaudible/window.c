@@ -2,6 +2,15 @@
 #include "app.h"
 #include <stdio.h>
 
+static void inaudible_window_on_button_press(InaudibleWindow* window,
+                                             const PuglEventButton* event);
+
+static void inaudible_window_on_button_release(InaudibleWindow* window,
+                                               const PuglEventButton* event);
+
+static void inaudible_window_on_mouse_move(InaudibleWindow* window,
+                                           const PuglEventMotion* event);
+
 InaudibleWindow* inaudible_window_new(const char* title,
                                       const int   width,
                                       const int   height,
@@ -25,6 +34,10 @@ InaudibleWindow* inaudible_window_new(const char* title,
     self->view = view;
     self->widgets = inaudible_linkedlist_new();
 
+    self->on_button_press = &inaudible_window_on_button_press;
+    self->on_button_release = &inaudible_window_on_button_release;
+    self->on_mouse_move = &inaudible_window_on_mouse_move;
+
     return self;
 }
 
@@ -37,22 +50,107 @@ inaudible_window_destroy(InaudibleWindow* window)
 }
 
 void
+inaudible_window_add_widget(InaudibleWindow* window,
+                            InaudibleWidget* widget)
+{
+    inaudible_linkedlist_add(&(window->widgets), widget);
+}
+
+void
 inaudible_window_close(InaudibleWindow* window)
 {
     window->closing = true;
 }
 
-void
-inaudible_window_show(InaudibleWindow* window)
+static void inaudible_window_on_button_release(InaudibleWindow* window,
+                                               const PuglEventButton* event)
 {
-    puglShowWindow(window->view);
+    InaudibleLinkedList* widgets = window->widgets;
+
+    int x = event->x;
+    int y = event->y;
+
+    while (widgets)
+    {
+        InaudibleWidget* widget = inaudible_linkedlist_get_value(widgets);
+        if (x >= widget->x && x < widget->x + widget->width)
+            if (y >= widget->y && y < widget->y + widget->height)
+                widget->on_button_release(widget, event);
+        if (widget->has_grab)
+            widget->on_button_release(widget, event);
+        widgets = widgets->next;
+    }
+}
+
+static void inaudible_window_on_button_press(InaudibleWindow* window,
+                                             const PuglEventButton* event)
+{
+    InaudibleLinkedList* widgets = window->widgets;
+
+    int x = event->x;
+    int y = event->y;
+
+    while (widgets)
+    {
+        InaudibleWidget* widget = inaudible_linkedlist_get_value(widgets);
+        if (x >= widget->x && x < widget->x + widget->width)
+            if (y >= widget->y && y < widget->y + widget->height)
+                widget->on_button_press(widget, event);
+        widgets = widgets->next;
+    }
+}
+
+static void inaudible_window_on_mouse_move(InaudibleWindow* window,
+                                           const PuglEventMotion* event)
+{
+    InaudibleLinkedList* widgets = window->widgets;
+
+    int x = event->x;
+    int y = event->y;
+
+    while (widgets)
+    {
+        InaudibleWidget* widget = inaudible_linkedlist_get_value(widgets);
+        if (x >= widget->x && x < widget->x + widget->width)
+            if (y >= widget->y && y < widget->y + widget->height)
+                widget->on_mouse_move(widget, event);
+        if (widget->has_grab)
+            widget->on_mouse_move(widget, event);
+        widgets = widgets->next;
+    }
 }
 
 void
-inaudible_window_add_widget(InaudibleWindow* window,
-                            InaudibleWidget* widget)
+inaudible_window_show(InaudibleWindow* window)
 {
-    inaudible_linkedlist_add(&(window->widgets), widget);
+   puglShowWindow(window->view);
+}
+
+static void
+onButtonPress(PuglView*        view,
+              const PuglEvent* event)
+{
+    InaudibleWindow* window = puglGetHandle(view);
+    if (window->on_button_press)
+        window->on_button_press(window, &(event->button));
+    onDisplay(view);
+}
+
+static void
+onButtonRelease(PuglView*        view,
+                const PuglEvent* event)
+{
+    InaudibleWindow* window = puglGetHandle(view);
+    if (window->on_button_release)
+        window->on_button_release(window, &(event->button));
+    onDisplay(view);
+}
+
+static void
+onClose(PuglView* view)
+{
+    InaudibleWindow* window = puglGetHandle(view);
+    inaudible_app_close_window(window);
 }
 
 static void
@@ -75,16 +173,10 @@ onDisplay(PuglView* view)
 }
 
 static void
-onClose(PuglView* view)
-{
+onMotion(PuglView *view, const PuglEvent* event) {
     InaudibleWindow* window = puglGetHandle(view);
-    inaudible_app_close_window(window);
-}
-
-static void onMotion(PuglView *view, const PuglEvent* event) {
-    InaudibleWindow* window = puglGetHandle(view);
-    if (window->onMouseMove)
-        window->onMouseMove(event->motion.x, event->motion.y);
+    if (window->on_mouse_move)
+        window->on_mouse_move(window, &(event->motion));
     onDisplay(view);
 }
 
@@ -107,8 +199,11 @@ onEvent(PuglView*        view,
             }
     		break;
     	case PUGL_BUTTON_PRESS:
-    		// Nothing.
+            onButtonPress(view, event);
     		break;
+        case PUGL_BUTTON_RELEASE:
+            onButtonRelease(view, event);
+            break;
     	case PUGL_ENTER_NOTIFY:
     		//puglPostRedisplay(view);
     		break;
