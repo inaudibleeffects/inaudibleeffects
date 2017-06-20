@@ -1,6 +1,13 @@
 #include "widgets/image.h"
 #include <stdio.h>
 
+
+struct InaudibleImage
+{
+    InaudiblePixbuf* pixbuf;
+};
+
+
 InaudibleWidget*
 inaudible_image_new(InaudiblePixbuf* pixbuf)
 {
@@ -20,19 +27,22 @@ inaudible_image_new(InaudiblePixbuf* pixbuf)
 }
 
 void
-inaudible_image_destroy(void* widget)
+inaudible_image_destroy(InaudibleWidget* widget)
 {
-    InaudibleWidget* w = widget;
-    INAUDIBLE_DESTROY(w->child);
-    INAUDIBLE_DESTROY(w);
+    INAUDIBLE_DESTROY(INAUDIBLE_IMAGE(widget));
 }
 
 void
-inaudible_image_draw(void* widget, cairo_t* context)
+inaudible_image_draw(InaudibleWidget* widget, cairo_t** context)
 {
-    InaudibleWidget* base = widget; // TODO : Refactor
-    InaudibleImage* image = base->child;
+    cairo_t* ctx = *context;
+    InaudibleImage* image = widget->child;
 
-    cairo_set_source_surface(context, image->pixbuf->surface, base->x, base->y);
-    cairo_paint(context);
+    cairo_set_source_surface(
+        ctx,
+        inaudible_pixbuf_get_surface(image->pixbuf),
+        widget->x,
+        widget->y
+    );
+    cairo_paint(ctx);
 }

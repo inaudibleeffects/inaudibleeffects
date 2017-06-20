@@ -1,5 +1,19 @@
 #include "pixbuf.h"
 
+
+struct InaudiblePixbuf
+{
+    cairo_surface_t* surface;
+};
+
+typedef struct
+{
+    const char *data;
+    unsigned int size;
+    unsigned int pos;
+} InaudiblePngStream;
+
+
 InaudiblePixbuf*
 inaudible_pixbuf_new(const char* data, size_t size)
 {

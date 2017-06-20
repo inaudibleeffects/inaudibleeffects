@@ -1,28 +1,28 @@
 #ifndef __INAUDIBLE_WIDGET_KNOB_H__
 #define __INAUDIBLE_WIDGET_KNOB_H__
 
-#include <stdbool.h>
 
+#include <stdbool.h>
 #include "pixbuf.h"
 #include "widget.h"
 
-typedef struct
-{
-    int number_of_tiles;
-    int size;
-    float max;
-    float min;
-    float value;
 
-    InaudiblePixbuf* tiles;
+#define INAUDIBLE_KNOB(obj) (INAUDIBLE_FROM_WIDGET(obj))
 
-} InaudibleKnob;
 
-InaudibleWidget* inaudible_knob_new(InaudiblePixbuf* tiles);
-void             inaudible_knob_destroy(void* knob);
+typedef struct InaudibleKnob InaudibleKnob;
 
-void             inaudible_knob_draw(void* knob, cairo_t* context);
-bool             inaudible_knob_set_tiles(InaudibleKnob* knob, InaudiblePixbuf* tiles);
-void             inaudible_knob_set_value(InaudibleKnob* knob, int value);
+
+InaudibleWidget* inaudible_knob_new       (InaudiblePixbuf* tiles);
+void             inaudible_knob_destroy   (InaudibleWidget* widget);
+
+void             inaudible_knob_draw      (InaudibleWidget* knob,
+                                           cairo_t** context);
+float            inaudible_knob_get_value (InaudibleKnob* knob);
+bool             inaudible_knob_set_tiles (InaudibleKnob* knob,
+                                           InaudiblePixbuf* tiles);
+void             inaudible_knob_set_value (InaudibleKnob* knob,
+                                           float value);
+
 
 #endif

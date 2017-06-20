@@ -1,6 +1,7 @@
 #ifndef __INAUDIBLE_H__
 #define __INAUDIBLE_H__
 
+#include <cairo/cairo.h>
 #include "app.h"
 #include "widget.h"
 #include "widgets/image.h"

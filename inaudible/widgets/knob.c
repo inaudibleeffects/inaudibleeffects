@@ -1,4 +1,23 @@
 #include "widgets/knob.h"
+#include <math.h>
+
+
+static int   last_y;
+static float last_value;
+
+
+struct InaudibleKnob
+{
+    int number_of_tiles;
+    int size;
+    float max;
+    float min;
+    float value;
+    float range;
+
+    InaudiblePixbuf* tiles;
+};
+
 
 static void inaudible_knob_on_button_press(InaudibleWidget* widget,
                                            const PuglEventButton* event);
@@ -18,6 +37,7 @@ inaudible_knob_new(InaudiblePixbuf* tiles)
     knob->min = 0.0f;
     knob->max = 1.0f;
     knob->value = 0.0f;
+    knob->range = knob->max - knob->min;
 
     inaudible_knob_set_tiles(knob, tiles);
 
@@ -37,33 +57,44 @@ inaudible_knob_new(InaudiblePixbuf* tiles)
 }
 
 void
-inaudible_knob_destroy(void* widget)
+inaudible_knob_destroy(InaudibleWidget* widget)
 {
-    InaudibleWidget* w = widget;
-    INAUDIBLE_DESTROY(w->child);
-    INAUDIBLE_DESTROY(w);
+    INAUDIBLE_DESTROY(INAUDIBLE_KNOB(widget));
 }
 
 void
-inaudible_knob_draw(void* widget, cairo_t* context)
+inaudible_knob_draw(InaudibleWidget* widget, cairo_t** context)
 {
-    InaudibleWidget* w = widget;
-    InaudibleKnob* knob = w->child;
+    cairo_t* ctx = *context;
+    InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
 
-    int height = inaudible_pixbuf_get_height(knob->tiles);
-    int width = inaudible_pixbuf_get_width(knob->tiles);
+    // Compute current frame index.
+    float ratio = (knob->value - knob->min) / (knob->max - knob->min);
+    int frame = (int)(ratio * (knob->number_of_tiles - 1));
 
-    cairo_set_source_surface(context,
+    // Draw frame from surface.
+    cairo_set_source_surface(ctx,
         inaudible_pixbuf_get_surface(knob->tiles),
-        w->x,
-        w->y - knob->value * knob->size);
-    cairo_rectangle(context, w->x, w->y, knob->size, knob->size);
+        widget->x,
+        widget->y - frame * knob->size);
+    cairo_rectangle(ctx, widget->x, widget->y, knob->size, knob->size);
+    cairo_fill(ctx);
+}
+
+float
+inaudible_knob_get_value(InaudibleKnob* knob)
+{
+    return knob->value;
 }
 
 static void
 inaudible_knob_on_button_press(InaudibleWidget* widget,
                                const PuglEventButton* event)
 {
+    InaudibleKnob* knob = INAUDIBLE_FROM_WIDGET(widget);
+    last_y = event->y;
+    last_value = knob->value;
+
     widget->has_grab = true;
 }
 
@@ -71,7 +102,6 @@ static void
 inaudible_knob_on_button_release(InaudibleWidget* widget,
                                const PuglEventButton* event)
 {
-    printf("SORTIE\n");
     widget->has_grab = false;
 }
 
@@ -81,9 +111,17 @@ inaudible_knob_on_mouse_move(InaudibleWidget* widget,
 {
     widget->has_focus = true;
 
-    InaudibleKnob* knob = widget->child;
+    InaudibleKnob* knob = INAUDIBLE_FROM_WIDGET(widget);
+
+    float range = (knob->max - knob->min) / 300;
+
     if (widget->has_grab)
-        inaudible_knob_set_value(knob, event->y);
+    {
+        inaudible_knob_set_value(
+            knob,
+            last_value + (last_y - event->y) * range
+        );
+    }
 }
 
 bool
@@ -103,8 +141,12 @@ inaudible_knob_set_tiles(InaudibleKnob* knob, InaudiblePixbuf* pixbuf)
 }
 
 void
-inaudible_knob_set_value(InaudibleKnob* knob, int value)
+inaudible_knob_set_value(InaudibleKnob* knob, float value)
 {
-    //printf("SET VALUE : %d\n", value);
-    knob->value = (float)value;
+    if (value < knob->min)
+        value = knob->min;
+    else if (value > knob->max)
+        value = knob->max;
+
+    knob->value = value;
 }

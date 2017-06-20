@@ -8,6 +8,10 @@
     free(object); \
     object = NULL
 
-#define INAUDIBLE_WIDGET(widget) &(widget->parent))
+#define INAUDIBLE_EXTERNAL_PNG(obj) extern char _binary_##obj##_png_start[]; \
+                                    extern char _binary_##obj##_png_end[]
+#define INAUDIBLE_EXTERNAL_PNG_START(obj) _binary_##obj##_png_start
+#define INAUDIBLE_EXTERNAL_PNG_SIZE(obj) _binary_##obj##_png_start - \
+                                         _binary_##obj##_png_end
 
 #endif

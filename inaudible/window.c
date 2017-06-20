@@ -2,6 +2,13 @@
 #include "app.h"
 #include <stdio.h>
 
+static bool
+mouse_in_widget(InaudibleWidget* widget, const int x, const int y)
+{
+    return  (x >= widget->x && x < widget->x + widget->width) && \
+            (y >= widget->y && y < widget->y + widget->height);
+}
+
 static void inaudible_window_on_button_press(InaudibleWindow* window,
                                              const PuglEventButton* event);
 
@@ -73,9 +80,6 @@ static void inaudible_window_on_button_release(InaudibleWindow* window,
     while (widgets)
     {
         InaudibleWidget* widget = inaudible_linkedlist_get_value(widgets);
-        if (x >= widget->x && x < widget->x + widget->width)
-            if (y >= widget->y && y < widget->y + widget->height)
-                widget->on_button_release(widget, event);
         if (widget->has_grab)
             widget->on_button_release(widget, event);
         widgets = widgets->next;
@@ -93,9 +97,8 @@ static void inaudible_window_on_button_press(InaudibleWindow* window,
     while (widgets)
     {
         InaudibleWidget* widget = inaudible_linkedlist_get_value(widgets);
-        if (x >= widget->x && x < widget->x + widget->width)
-            if (y >= widget->y && y < widget->y + widget->height)
-                widget->on_button_press(widget, event);
+        if (mouse_in_widget(widget, x, y))
+            widget->on_button_press(widget, event);
         widgets = widgets->next;
     }
 }
@@ -111,10 +114,7 @@ static void inaudible_window_on_mouse_move(InaudibleWindow* window,
     while (widgets)
     {
         InaudibleWidget* widget = inaudible_linkedlist_get_value(widgets);
-        if (x >= widget->x && x < widget->x + widget->width)
-            if (y >= widget->y && y < widget->y + widget->height)
-                widget->on_mouse_move(widget, event);
-        if (widget->has_grab)
+        if (mouse_in_widget(widget, x, y) || widget->has_grab)
             widget->on_mouse_move(widget, event);
         widgets = widgets->next;
     }
@@ -133,7 +133,6 @@ onButtonPress(PuglView*        view,
     InaudibleWindow* window = puglGetHandle(view);
     if (window->on_button_press)
         window->on_button_press(window, &(event->button));
-    onDisplay(view);
 }
 
 static void
@@ -143,7 +142,6 @@ onButtonRelease(PuglView*        view,
     InaudibleWindow* window = puglGetHandle(view);
     if (window->on_button_release)
         window->on_button_release(window, &(event->button));
-    onDisplay(view);
 }
 
 static void
@@ -165,11 +163,10 @@ onDisplay(PuglView* view)
     while (widgets)
     {
         widget = inaudible_linkedlist_get_value(widgets);
-        widget->draw(widget, cr);
+        widget->draw(widget, &cr);
+        cairo_fill(cr); // Ensure widget to be drawn.
         widgets = widgets->next;
     }
-
-    cairo_fill(cr);
 }
 
 static void
@@ -224,12 +221,4 @@ onEvent(PuglView*        view,
     		break;
     	default: break;
     }
-}
-
-
-// TODO : Remove ?
-PuglView*
-inaudible_window_get_view(InaudibleWindow* window)
-{
-    return window->view;
 }
