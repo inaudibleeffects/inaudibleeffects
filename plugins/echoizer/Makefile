@@ -17,6 +17,7 @@ echoizer_ui.so: echoizer_ui.c ui
 	gcc -DPUGL_HAVE_CAIRO \
 		-I $(LIBS_DIR) \
 	 	-lcairo \
+		-lm \
 		-lX11 \
 		$(LIBS_DIR)/pugl/pugl_x11.c\
 		$(LIBS_DIR)/*.c \

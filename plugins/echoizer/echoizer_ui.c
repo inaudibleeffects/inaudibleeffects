@@ -1,21 +1,15 @@
-// See https://github.com/drobilla/pugl/blob/master/pugl_cairo_test.c
-
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-
-#include <cairo/cairo.h>
-
 #include "inaudible.h"
 
-extern char _binary_knob_png_start[];
-extern char _binary_knob_png_end[];
-
-extern char _binary_background_png_start[];
-extern char _binary_background_png_end[];
+INAUDIBLE_EXTERNAL_PNG(knob);
+INAUDIBLE_EXTERNAL_PNG(background);
 
 static InaudibleWidget* image;
-static InaudibleWidget* knob;
+static InaudibleWidget* knobDelay;
+static InaudibleWidget* knobFeedback;
+static InaudibleWidget* knobBlend;
 static InaudiblePixbuf* backgroundPixbuf;
 static InaudiblePixbuf* knobPixbuf;
 static InaudibleWindow* window;
@@ -27,49 +21,60 @@ main(int argc, char** argv)
 
     inaudible_app();
 
-    // Pre-load data
-    const char* start;
-    const char* end;
-    size_t size;
 
     printf("Loading background...\n");
 
-    start = _binary_background_png_start;
-    end = _binary_background_png_end;
-    size = (size_t)(end - start);
+    backgroundPixbuf = INAUDIBLE_PIXBUF_FROM(background);
 
-    backgroundPixbuf = inaudible_pixbuf_new(start, size);
     image = inaudible_image_new(backgroundPixbuf);
 
-    printf("Loading knob...\n");
 
-    start = _binary_knob_png_start;
-    end = _binary_knob_png_end;
-    size = (size_t)(end - start);
+    printf("Loading knobs...\n");
 
-    knobPixbuf = inaudible_pixbuf_new(start, size);
-    knob = inaudible_knob_new(knobPixbuf);
-    knob->x = 54;
-    knob->y = 36;
+    knobPixbuf = INAUDIBLE_PIXBUF_FROM(knob);
+
+    knobDelay = inaudible_knob_new(knobPixbuf);
+    knobDelay->x = 54;
+    knobDelay->y = 36;
+
+    knobFeedback = inaudible_knob_new(knobPixbuf);
+    knobFeedback->x = 174;
+    knobFeedback->y = 36;
+
+    knobBlend = inaudible_knob_new(knobPixbuf);
+    knobBlend->x = 294;
+    knobBlend->y = 36;
+
+    inaudible_knob_set_value(INAUDIBLE_KNOB(knobDelay), 0.5f);
+    inaudible_knob_set_value(INAUDIBLE_KNOB(knobFeedback), 0.5f);
+    inaudible_knob_set_value(INAUDIBLE_KNOB(knobBlend), 0.5f);
+
 
     printf("Loading view...\n");
 
     window = inaudible_window_new("Echoizer", 600, 150, false);
     inaudible_window_add_widget(window, image);
-    inaudible_window_add_widget(window, knob);
+    inaudible_window_add_widget(window, knobDelay);
+    inaudible_window_add_widget(window, knobFeedback);
+    inaudible_window_add_widget(window, knobBlend);
+
 
     printf("Loading window...\n");
 
     inaudible_app_show_window(window);
 
+
     printf("Running app...\n");
 
     inaudible_app_run();
 
+
     printf("Removing resources...\n");
 
     inaudible_widget_destroy(image);
-    inaudible_widget_destroy(knob);
+    inaudible_widget_destroy(knobDelay);
+    inaudible_widget_destroy(knobFeedback);
+    inaudible_widget_destroy(knobBlend);
     inaudible_pixbuf_destroy(backgroundPixbuf);
     inaudible_pixbuf_destroy(knobPixbuf);
     inaudible_window_destroy(window);
