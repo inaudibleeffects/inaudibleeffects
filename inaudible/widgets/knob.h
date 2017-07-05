@@ -5,24 +5,32 @@
 #include <stdbool.h>
 #include "pixbuf.h"
 #include "widget.h"
+#include "eventhandler.h"
 
 
-#define INAUDIBLE_KNOB(obj) (INAUDIBLE_FROM_WIDGET(obj))
+#define INAUDIBLE_KNOB(obj) ((InaudibleKnob*)(INAUDIBLE_FROM_WIDGET(obj)))
 
 
-typedef struct InaudibleKnob InaudibleKnob;
+typedef struct _InaudibleKnobPrivate InaudibleKnobPrivate;
+typedef struct _InaudibleKnob {
+
+    void (*value_changed) (struct _InaudibleKnob* knob, const float value);
+
+    InaudibleKnobPrivate* private;
+
+} InaudibleKnob;
 
 
 InaudibleWidget* inaudible_knob_new       (InaudiblePixbuf* tiles);
 void             inaudible_knob_destroy   (InaudibleWidget* widget);
 
 void             inaudible_knob_draw      (InaudibleWidget* knob,
-                                           cairo_t** context);
-float            inaudible_knob_get_value (InaudibleKnob* knob);
-bool             inaudible_knob_set_tiles (InaudibleKnob* knob,
+                                           cairo_t**        context);
+float            inaudible_knob_get_value (InaudibleKnob*   knob);
+bool             inaudible_knob_set_tiles (InaudibleKnob*   knob,
                                            InaudiblePixbuf* tiles);
-void             inaudible_knob_set_value (InaudibleKnob* knob,
-                                           float value);
+void             inaudible_knob_set_value (InaudibleKnob*   knob,
+                                           float            value);
 
 
 #endif

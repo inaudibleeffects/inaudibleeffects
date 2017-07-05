@@ -16,7 +16,7 @@ InaudibleWidget* inaudible_image_new     (InaudiblePixbuf* pixbuf);
 void             inaudible_image_destroy (InaudibleWidget* widget);
 
 void             inaudible_image_draw    (InaudibleWidget* widget,
-                                          cairo_t** context);
+                                          cairo_t**        context);
 
 
 #endif

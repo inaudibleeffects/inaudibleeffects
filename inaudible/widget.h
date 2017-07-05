@@ -1,11 +1,14 @@
 #ifndef __INAUDIBLE_WIDGET_H__
 #define __INAUDIBLE_WIDGET_H__
 
+
 #include <cairo/cairo.h>
 #include "pugl/pugl.h"
 #include "macros.h"
 
+
 #define INAUDIBLE_FROM_WIDGET(obj) obj->child
+
 
 typedef struct widget {
 
@@ -27,6 +30,8 @@ typedef struct widget {
 
 } InaudibleWidget;
 
+
 void inaudible_widget_destroy(InaudibleWidget* widget);
+
 
 #endif

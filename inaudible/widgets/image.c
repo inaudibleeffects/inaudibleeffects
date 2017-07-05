@@ -14,7 +14,11 @@ inaudible_image_new(InaudiblePixbuf* pixbuf)
     InaudibleWidget* widget = INAUDIBLE_NEW(InaudibleWidget);
     InaudibleImage* image = INAUDIBLE_NEW(InaudibleImage);
 
+    // Private
+
     image->pixbuf = pixbuf;
+
+    // Widget
 
     widget->x = 0;
     widget->y = 0;
