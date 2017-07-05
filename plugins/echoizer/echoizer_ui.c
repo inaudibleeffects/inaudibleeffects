@@ -14,6 +14,11 @@ static InaudiblePixbuf* backgroundPixbuf;
 static InaudiblePixbuf* knobPixbuf;
 static InaudibleWindow* window;
 
+static void value_changed(InaudibleKnob* knob, const float value)
+{
+    printf("Value = %f\n", value);
+}
+
 int
 main(int argc, char** argv)
 {
@@ -34,15 +39,17 @@ main(int argc, char** argv)
     knobPixbuf = INAUDIBLE_PIXBUF_FROM(knob);
 
     knobDelay = inaudible_knob_new(knobPixbuf);
-    knobDelay->x = 54;
+    knobDelay->x = 55;
     knobDelay->y = 36;
+
+    INAUDIBLE_CONNECT(INAUDIBLE_KNOB(knobDelay), value_changed, value_changed);
 
     knobFeedback = inaudible_knob_new(knobPixbuf);
     knobFeedback->x = 174;
     knobFeedback->y = 36;
 
     knobBlend = inaudible_knob_new(knobPixbuf);
-    knobBlend->x = 294;
+    knobBlend->x = 293;
     knobBlend->y = 36;
 
     inaudible_knob_set_value(INAUDIBLE_KNOB(knobDelay), 0.5f);
