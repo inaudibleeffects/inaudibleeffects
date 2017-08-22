@@ -62,7 +62,7 @@ inaudible_window_add_widget(InaudibleWindow* window,
 {
     inaudible_linkedlist_add(&(window->widgets), widget);
 }
-__INAUDIBLE_WIDGET_H__
+
 void
 inaudible_window_close(InaudibleWindow* window)
 {
