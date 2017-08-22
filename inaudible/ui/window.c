@@ -1,4 +1,4 @@
-#include "window.h"
+#include "ui/window.h"
 #include "app.h"
 #include <stdio.h>
 
@@ -9,13 +9,13 @@ mouse_in_widget(InaudibleWidget* widget, const int x, const int y)
             (y >= widget->y && y < widget->y + widget->height);
 }
 
-static void inaudible_window_on_button_press(InaudibleWindow* window,
+static void inaudible_window_on_button_press(InaudibleWindow*       window,
                                              const PuglEventButton* event);
 
-static void inaudible_window_on_button_release(InaudibleWindow* window,
+static void inaudible_window_on_button_release(InaudibleWindow*       window,
                                                const PuglEventButton* event);
 
-static void inaudible_window_on_mouse_move(InaudibleWindow* window,
+static void inaudible_window_on_mouse_move(InaudibleWindow*       window,
                                            const PuglEventMotion* event);
 
 InaudibleWindow* inaudible_window_new(const char* title,
@@ -62,14 +62,14 @@ inaudible_window_add_widget(InaudibleWindow* window,
 {
     inaudible_linkedlist_add(&(window->widgets), widget);
 }
-
+__INAUDIBLE_WIDGET_H__
 void
 inaudible_window_close(InaudibleWindow* window)
 {
     window->closing = true;
 }
 
-static void inaudible_window_on_button_release(InaudibleWindow* window,
+static void inaudible_window_on_button_release(InaudibleWindow*       window,
                                                const PuglEventButton* event)
 {
     InaudibleLinkedList* widgets = window->widgets;
@@ -86,7 +86,7 @@ static void inaudible_window_on_button_release(InaudibleWindow* window,
     }
 }
 
-static void inaudible_window_on_button_press(InaudibleWindow* window,
+static void inaudible_window_on_button_press(InaudibleWindow*       window,
                                              const PuglEventButton* event)
 {
     InaudibleLinkedList* widgets = window->widgets;
@@ -103,7 +103,7 @@ static void inaudible_window_on_button_press(InaudibleWindow* window,
     }
 }
 
-static void inaudible_window_on_mouse_move(InaudibleWindow* window,
+static void inaudible_window_on_mouse_move(InaudibleWindow*       window,
                                            const PuglEventMotion* event)
 {
     InaudibleLinkedList* widgets = window->widgets;
@@ -170,7 +170,9 @@ onDisplay(PuglView* view)
 }
 
 static void
-onMotion(PuglView *view, const PuglEvent* event) {
+onMotion(PuglView*        view,
+         const PuglEvent* event)
+{
     InaudibleWindow* window = puglGetHandle(view);
     if (window->on_mouse_move)
         window->on_mouse_move(window, &(event->motion));

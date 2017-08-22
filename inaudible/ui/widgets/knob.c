@@ -1,4 +1,4 @@
-#include "widgets/knob.h"
+#include "ui/widgets/knob.h"
 #include <math.h>
 
 
@@ -20,14 +20,18 @@ struct _InaudibleKnobPrivate
 
 
 
-static void inaudible_knob_on_button_press(InaudibleWidget*       widget,
-                                           const PuglEventButton* event);
+static void
+inaudible_knob_on_button_press(InaudibleWidget*       widget,
+                               const PuglEventButton* event);
 
-static void inaudible_knob_on_button_release(InaudibleWidget*       widget,
-                                             const PuglEventButton* event);
+static void
+inaudible_knob_on_button_release(InaudibleWidget*       widget,
+                                 const PuglEventButton* event);
 
-static void inaudible_knob_on_mouse_move(InaudibleWidget*       widget,
-                                         const PuglEventMotion* event);
+static void
+inaudible_knob_on_mouse_move(InaudibleWidget*       widget,
+                             const PuglEventMotion* event);
+
 
 InaudibleWidget*
 inaudible_knob_new(InaudiblePixbuf* tiles)
@@ -74,7 +78,8 @@ inaudible_knob_destroy(InaudibleWidget* widget)
 }
 
 void
-inaudible_knob_draw(InaudibleWidget* widget, cairo_t** context)
+inaudible_knob_draw(InaudibleWidget* widget,
+                    cairo_t**        context)
 {
     cairo_t* ctx = *context;
     InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
@@ -101,7 +106,7 @@ inaudible_knob_get_value(InaudibleKnob* knob)
 }
 
 static void
-inaudible_knob_on_button_press(InaudibleWidget* widget,
+inaudible_knob_on_button_press(InaudibleWidget*       widget,
                                const PuglEventButton* event)
 {
     InaudibleKnob* knob = INAUDIBLE_FROM_WIDGET(widget);
@@ -113,14 +118,14 @@ inaudible_knob_on_button_press(InaudibleWidget* widget,
 }
 
 static void
-inaudible_knob_on_button_release(InaudibleWidget* widget,
+inaudible_knob_on_button_release(InaudibleWidget*     widget,
                                const PuglEventButton* event)
 {
     widget->has_grab = false;
 }
 
 static void
-inaudible_knob_on_mouse_move(InaudibleWidget* widget,
+inaudible_knob_on_mouse_move(InaudibleWidget*       widget,
                              const PuglEventMotion* event)
 {
     widget->has_focus = true;
@@ -159,7 +164,8 @@ inaudible_knob_set_tiles(InaudibleKnob*   knob,
 }
 
 void
-inaudible_knob_set_value(InaudibleKnob* knob, float value)
+inaudible_knob_set_value(InaudibleKnob* knob,
+                         float          value)
 {
     InaudibleKnobPrivate* private = INAUDIBLE_PRIVATE(knob);
 

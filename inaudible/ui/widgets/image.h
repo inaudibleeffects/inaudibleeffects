@@ -2,8 +2,8 @@
 #define __INAUDIBLE_WIDGET_IMAGE_H__
 
 
-#include "pixbuf.h"
-#include "widget.h"
+#include "ui/pixbuf.h"
+#include "ui/widget.h"
 
 
 #define INAUDIBLE_IMAGE(obj) (INAUDIBLE_FROM_WIDGET(obj))
@@ -19,4 +19,4 @@ void             inaudible_image_draw    (InaudibleWidget* widget,
                                           cairo_t**        context);
 
 
-#endif
+#endif //__INAUDIBLE_WIDGET_IMAGE_H__

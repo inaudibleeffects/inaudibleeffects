@@ -1,4 +1,4 @@
-#include "widgets/image.h"
+#include "ui/widgets/image.h"
 #include <stdio.h>
 
 
@@ -37,7 +37,8 @@ inaudible_image_destroy(InaudibleWidget* widget)
 }
 
 void
-inaudible_image_draw(InaudibleWidget* widget, cairo_t** context)
+inaudible_image_draw(InaudibleWidget* widget,
+                     cairo_t**        context)
 {
     cairo_t* ctx = *context;
     InaudibleImage* image = widget->child;

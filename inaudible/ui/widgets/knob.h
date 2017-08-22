@@ -3,9 +3,8 @@
 
 
 #include <stdbool.h>
-#include "pixbuf.h"
-#include "widget.h"
-#include "eventhandler.h"
+#include "ui/pixbuf.h"
+#include "ui/widget.h"
 
 
 #define INAUDIBLE_KNOB(obj) ((InaudibleKnob*)(INAUDIBLE_FROM_WIDGET(obj)))
@@ -14,7 +13,8 @@
 typedef struct _InaudibleKnobPrivate InaudibleKnobPrivate;
 typedef struct _InaudibleKnob {
 
-    void (*value_changed) (struct _InaudibleKnob* knob, const float value);
+    void (*value_changed) (struct _InaudibleKnob* knob,
+                           const float            value);
 
     InaudibleKnobPrivate* private;
 
@@ -33,4 +33,4 @@ void             inaudible_knob_set_value (InaudibleKnob*   knob,
                                            float            value);
 
 
-#endif
+#endif //__INAUDIBLE_WIDGET_KNOB_H__

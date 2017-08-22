@@ -1,4 +1,4 @@
-#include "pixbuf.h"
+#include "ui/pixbuf.h"
 
 
 struct InaudiblePixbuf
@@ -15,7 +15,8 @@ typedef struct
 
 
 InaudiblePixbuf*
-inaudible_pixbuf_new(const char* data, size_t size)
+inaudible_pixbuf_new(const char* data,
+                     size_t      size)
 {
     InaudiblePixbuf* pixbuf = INAUDIBLE_NEW(InaudiblePixbuf);
 
@@ -53,7 +54,9 @@ inaudible_pixbuf_get_width(InaudiblePixbuf* pixbuf)
 }
 
 static cairo_status_t
-inaudible_pixbuf_read(void* closure, unsigned char* data, unsigned int length)
+inaudible_pixbuf_read(void*          closure,
+                      unsigned char* data,
+                      unsigned int   length)
 {
     InaudiblePngStream* stream = (InaudiblePngStream*)closure;
 
