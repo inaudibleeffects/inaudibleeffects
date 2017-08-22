@@ -3,8 +3,7 @@
 
 #include <cairo/cairo.h>
 #include "app.h"
-#include "widget.h"
-#include "widgets/image.h"
-#include "widgets/knob.h"
+#include "ui/widgets/image.h"
+#include "ui/widgets/knob.h"
 
 #endif //__INAUDIBLE_H__

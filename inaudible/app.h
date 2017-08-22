@@ -2,7 +2,7 @@
 #define __INAUDIBLE_APP_H__
 
 #include "types/linkedlist.h"
-#include "window.h"
+#include "ui/window.h"
 
 typedef struct {
     int quit;
