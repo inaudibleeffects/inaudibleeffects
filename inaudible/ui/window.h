@@ -26,10 +26,11 @@ typedef struct Window {
 } InaudibleWindow;
 
 
-InaudibleWindow* inaudible_window_new       (const char*      title,
+InaudibleWindow* inaudible_window_new       (PuglNativeWindow parent,
+                                             const char*      title,
                                              const int        width,
                                              const int        height,
-                                             bool             resizable);
+                                             const bool       resizable);
 void             inaudible_window_destroy   (InaudibleWindow* window);
 
 void             inaudible_window_close     (InaudibleWindow* window);

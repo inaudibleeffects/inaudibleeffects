@@ -71,8 +71,7 @@ inaudible_knob_destroy(InaudibleWidget* widget)
 {
     InaudibleKnob* knob = INAUDIBLE_KNOB(widget);
     InaudibleKnobPrivate* private = INAUDIBLE_PRIVATE(knob);
-    inaudible_widget_destroy(widget);
-    inaudible_pixbuf_destroy(private->tiles);
+
     INAUDIBLE_DESTROY(private);
     INAUDIBLE_DESTROY(knob);
 }
@@ -133,7 +132,7 @@ inaudible_knob_on_mouse_move(InaudibleWidget*       widget,
     InaudibleKnob* knob = INAUDIBLE_FROM_WIDGET(widget);
     InaudibleKnobPrivate* private = INAUDIBLE_PRIVATE(knob);
 
-    float range = (private->max - private->min) / 300;
+    float range = (private->max - private->min) / private->number_of_tiles;
 
     if (widget->has_grab)
     {

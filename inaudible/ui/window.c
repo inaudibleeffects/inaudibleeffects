@@ -18,14 +18,16 @@ static void inaudible_window_on_button_release(InaudibleWindow*       window,
 static void inaudible_window_on_mouse_move(InaudibleWindow*       window,
                                            const PuglEventMotion* event);
 
-InaudibleWindow* inaudible_window_new(const char* title,
-                                      const int   width,
-                                      const int   height,
-                                      bool        resizable)
+InaudibleWindow* inaudible_window_new(PuglNativeWindow parent,
+                                      const char*      title,
+                                      const int        width,
+                                      const int        height,
+                                      const bool       resizable)
 {
     InaudibleWindow* self = INAUDIBLE_NEW(InaudibleWindow);
 
     PuglView* view = puglInit(NULL, NULL);
+    puglInitWindowParent(view, parent);
     puglInitWindowSize(view, width, height);
     puglInitResizable(view, resizable);
     puglInitContextType(view, PUGL_CAIRO);
@@ -35,6 +37,7 @@ InaudibleWindow* inaudible_window_new(const char* title,
     puglSetEventFunc(view, onEvent);
 
     puglCreateWindow(view, title);
+    //puglGetHandle(view);
 
     self->closing = false;
     self->title = title;
@@ -69,8 +72,15 @@ inaudible_window_close(InaudibleWindow* window)
     window->closing = true;
 }
 
-static void inaudible_window_on_button_release(InaudibleWindow*       window,
-                                               const PuglEventButton* event)
+PuglView*
+inaudible_window_get_view(InaudibleWindow* window)
+{
+    return window->view;
+}
+
+static void
+inaudible_window_on_button_release(InaudibleWindow*       window,
+                                   const PuglEventButton* event)
 {
     InaudibleLinkedList* widgets = window->widgets;
 

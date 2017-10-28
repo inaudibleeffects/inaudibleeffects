@@ -1,18 +1,57 @@
 #include "app.h"
 
 #include <stdio.h>
+#include <unistd.h>
 
+bool running;
 void
 inaudible_app()
 {
     app = INAUDIBLE_NEW(InaudibleApp);
     app->windows = NULL;
     app->quit = 0;
+
+    running = false;
+}
+
+void
+inaudible_app_iteration()
+{
+    InaudibleLinkedList* windows = app->windows;
+
+    if (!windows)
+        return;
+
+    InaudibleWindow* window = windows->data;
+
+    while (window)
+    {
+        puglWaitForEvent(window->view);
+        puglProcessEvents(window->view);
+
+        if (window->closing)
+            break;
+
+        if (windows->next != NULL)
+        {
+            windows = windows->next;
+            window = windows->data;
+        }
+        else
+        {
+            break;
+        }
+	}
 }
 
 void
 inaudible_app_run()
 {
+    if (running)
+        return;
+
+    running = true;
+
     InaudibleLinkedList* windows = app->windows;
     InaudibleWindow* window = windows->data;
 

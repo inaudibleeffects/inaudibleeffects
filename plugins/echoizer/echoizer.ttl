@@ -14,10 +14,16 @@
 
 
 <http://inaudibleeffects.github.io/echoizer#ui>
-   a ui:Gtk3UI ;
-   ui:binary <echoizer_ui.so> ;
-   ui:requiredFeature ui:makeResident ;
-   lv2:extensionData ui:showInterface .
+   a <http://lv2plug.in/ns/extensions/ui#X11UI> ;
+   lv2:requiredFeature ui:idleInterface ;
+   lv2:extensionData ui:idleInterface ;
+   ui:portNotification [
+       ui:plugin <http://inaudibleeffects.github.io/echoizer> ;
+       lv2:symbol "time"
+   ] .
+   #ui:binary <echoizer_ui.so> ;
+   #ui:requiredFeature ui:makeResident ;
+   #lv2:extensionData ui:showInterface .
 
 <http://inaudibleeffects.github.io/echoizer>
 	a lv2:Plugin ,
@@ -30,9 +36,9 @@
 	doap:license <https://opensource.org/licenses/GPL-3.0> ;
     doap:description "Simple audo delay processor";
     doap:maintainer [
-            foaf:name "Cyriaque Skrapits" ;
-            foaf:homepage <http://inaudibleffects.github.io> ;
-            ] ;
+        foaf:name "Cyriaque Skrapits" ;
+        foaf:homepage <http://inaudibleffects.github.io> ;
+    ] ;
 
     ui:ui <http://inaudibleeffects.github.io/echoizer#ui>;
 
